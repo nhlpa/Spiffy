@@ -9,13 +9,13 @@ namespace Spiffy
 {
   public class DbBatch : IDbBatch
   {
-    public DbBatch(IDbConnection conn, IDbTransaction tran)
-    {
-      Connection = conn ?? throw new ArgumentNullException(nameof(conn));
-      Transaction = tran ?? throw new ArgumentNullException(nameof(tran));
-    }
+    public readonly IDbConnection _connection;
 
-    public IDbConnection Connection { get; }
+    public DbBatch(IDbTransaction tran)
+    {      
+      Transaction = tran ?? throw new ArgumentNullException(nameof(tran));
+      _connection = tran.Connection ?? throw new ArgumentNullException(nameof(tran.Connection));
+    }
 
     public IDbTransaction Transaction { get; }
 
@@ -60,7 +60,7 @@ namespace Spiffy
     /// </summary>
     private void Reset()
     {
-      Connection.TryClose();
+      _connection.TryClose();
       Transaction.Dispose();
     }
   }

@@ -10,7 +10,7 @@ namespace Spiffy
       cmd.Transaction = tran;
       cmd.CommandType = CommandType.Text;
       cmd.CommandText = sql;
-
+      
       foreach (var p in param ?? new DbParams())
       {
         var cmdParam = cmd.CreateParameter();
@@ -20,6 +20,6 @@ namespace Spiffy
       }
 
       return cmd;
-    }
+    }        
   }
 }

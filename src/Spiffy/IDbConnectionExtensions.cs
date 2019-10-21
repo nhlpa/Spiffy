@@ -16,7 +16,7 @@ public static class IDbConnectionExtensions
     {
       conn.TryOpenConnection();
       var tran = conn.TryBeginTransaction();
-      return new DbBatch(conn, tran);
+      return new DbBatch(tran);
     }
 
     /// <summary>
