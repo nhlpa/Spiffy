@@ -1,7 +1,5 @@
 # Spiffy - simple data access for .NET 
 
-## Features
-
 Spiffy is a library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) a little bit simpler. 
 
 At it's core is a batch model, which encourages performing database-related work in **units**. It also extends your `IDbConnection` interface to enable a simple API for performing queries that will be automatically batched for you.
@@ -124,7 +122,7 @@ On commit batches will automatically take care of cleaning up all volatile resou
 
 ## Why no automatic mapping?
 
-No matter how you slice it (cached or not) reflection is slow, brittle and hard to debug. As such, the library encourages you to define your mappings manually and aims to help you do this by extending the `IDataReader` interface with 2 helpers (`GetValue<T>()` & `GetNullableValue<T>()` (to make retrieving values safer and more direct.
+No matter how you slice it (cached or not) reflection is slow, brittle and hard to debug. As such, the library encourages you to define your mappings manually and aims to help you do this by extending the `IDataReader` interface with 2 helpers (`GetValue<T>()` & `GetNullableValue<T>()`) to make retrieving values safer and more direct.
 
 ## Find a bug?
 
