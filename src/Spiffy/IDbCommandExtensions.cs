@@ -77,7 +77,7 @@ namespace Spiffy
       }
       catch (Exception ex)
       {
-        throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, ex);
+        throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
       }
     }
 
@@ -86,11 +86,11 @@ namespace Spiffy
       try
       {
         var result = cmd.ExecuteScalar();
-        return (T)Convert.ChangeType(result, typeof(T));
+        return result != null ? (T)Convert.ChangeType(result, typeof(T)) : default(T);
       }
       catch (Exception ex)
       {
-        throw new FailedExecutionException(DbErrorCode.CouldNotExecuteScalar, ex);
+        throw new FailedExecutionException(DbErrorCode.CouldNotExecuteScalar, cmd.CommandText, ex);
       }
     }
 
@@ -102,7 +102,7 @@ namespace Spiffy
       }
       catch (Exception ex)
       {
-        throw new FailedExecutionException(DbErrorCode.CouldNotExecuteReader, ex);
+        throw new FailedExecutionException(DbErrorCode.CouldNotExecuteReader, cmd.CommandText, ex);
       }
     }
   }

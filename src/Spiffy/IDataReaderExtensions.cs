@@ -44,22 +44,21 @@ namespace Spiffy
         return null;
       }
 
-      int i = default(int);
       try
       {
-        rd.GetOrdinal(fieldname);
+        int i = rd.GetOrdinal(fieldname);
+
+        if (rd.IsDBNull(i))
+        {
+          return null;
+        }
+
+        return rd.GetValue(i);
       }
       catch (IndexOutOfRangeException ex)
       {
         throw new IndexOutOfRangeException($"The column '{fieldname}' was not found.", ex);
       }
-
-      if(rd.IsDBNull(i))
-      {
-        return null;
-      }
-
-      return rd.GetValue(i);
     }
   }
 }

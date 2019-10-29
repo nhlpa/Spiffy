@@ -109,15 +109,8 @@ public static class IDbConnectionExtensions
     }
 
     private static void TryCloseConnection(this IDbConnection conn)
-    {
-      try
-      {
-        conn.Close();
-      }
-      catch (Exception ex)
-      {
-        throw new CouldNotCloseConnectionException(ex);
-      }
+    {      
+      conn.Close();      
     }
 
     private static void TryOpenConnection(this IDbConnection conn)

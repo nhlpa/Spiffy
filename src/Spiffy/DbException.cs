@@ -36,13 +36,6 @@ namespace Spiffy
     { }
   }
 
-  public class CouldNotCloseConnectionException : DbException
-  {
-    public CouldNotCloseConnectionException(Exception ex)
-      : base(DbErrorCode.CouldNotCloseConnection, $"Could not close database connection.", ex)
-    { }
-  }
-
   public class ConnectionBusyException : DbException
   {
     public ConnectionBusyException()
@@ -72,8 +65,8 @@ namespace Spiffy
   }
 
   public class FailedExecutionException : DbException
-  {
-    public FailedExecutionException(DbErrorCode errorCode, Exception ex)
-      : base(errorCode, "Could not execute.", ex) { }
+  {    
+    public FailedExecutionException(DbErrorCode errorCode, string sql, Exception ex)
+      : base(errorCode, sql, ex) { }
   }
 }
