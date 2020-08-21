@@ -2,8 +2,11 @@
 
 namespace Nhlpa.Sql
 {
-  public interface IDbFixture
-  {
-    IDbConnection NewConnection();
-  }
+    /// <summary>
+    /// Represents a connection fixture to a specific data source.
+    /// </summary>
+    public interface IDbFixture
+    {
+        IDbConnection NewConnection();
+    }
 }
