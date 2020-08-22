@@ -5,6 +5,14 @@ namespace Nhlpa.Sql
 {
     internal static class IDbTransactionExtensions
     {
+
+        /// <summary>
+        /// Create a new IDbCommand.
+        /// </summary>
+        /// <param name="tran"></param>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         internal static IDbCommand NewCommand(this IDbTransaction tran, string sql, DbParams param = null)
         {
             var cmd = tran.Connection.CreateCommand();

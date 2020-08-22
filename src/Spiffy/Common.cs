@@ -4,6 +4,12 @@ namespace Nhlpa.Sql
 {
     public class Common
     {
+        /// <summary>
+        /// Convert object value into type T, with support for nullable value types.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static T ChangeType<T>(object value)
         {
             if (value == null || value == DBNull.Value)

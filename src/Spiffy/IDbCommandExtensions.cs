@@ -7,9 +7,21 @@ namespace Nhlpa.Sql
     internal static class IDbCommandExtensions
     {
 
+        /// <summary>
+        /// Execute parameterized query and return rows affected.
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
         internal static int Exec(this IDbCommand cmd) =>
           cmd.TryExecuteNonQuery();
 
+        /// <summary>
+        /// Execute parameterized query, enumerate all records and apply mapping.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cmd"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
         internal static IEnumerable<T> Query<T>(this IDbCommand cmd, Func<IDataReader, T> map)
         {
             using (var rd = cmd.TryExecuteReader())
@@ -25,6 +37,13 @@ namespace Nhlpa.Sql
             }
         }
 
+        /// <summary>
+        /// Execute paramterized query, read only first record and apply mapping.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cmd"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
         internal static T QuerySingle<T>(this IDbCommand cmd, Func<IDataReader, T> map)
         {
             using (var rd = cmd.TryExecuteReader())
@@ -40,9 +59,18 @@ namespace Nhlpa.Sql
             }
         }
 
+        /// <summary>
+        /// Execute paramterized query and manually cursor IDataReader.
+        /// </summary>
         internal static IDataReader Read(this IDbCommand cmd) =>
           cmd.TryExecuteReader();
 
+        /// <summary>
+        /// Execute parameterized query and return single-value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
         internal static T Val<T>(this IDbCommand cmd) =>
           cmd.TryExecuteScalar<T>();
 

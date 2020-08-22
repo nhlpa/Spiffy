@@ -6,8 +6,8 @@ namespace Nhlpa.Sql
 {
     public class DbBatch : IDbBatch
     {
-        private IDbConnection _connection;
-        private IDbTransaction _transaction;
+        private readonly IDbConnection _connection;
+        private readonly IDbTransaction _transaction;
 
         public DbBatch(IDbConnection connection, IDbTransaction transaction)
         {
@@ -28,7 +28,7 @@ namespace Nhlpa.Sql
             }
             finally
             {
-                Reset();
+                Dispose();
             }
         }
 
@@ -40,7 +40,7 @@ namespace Nhlpa.Sql
             }
             finally
             {
-                Reset();
+                Dispose();
             }
         }
 
@@ -83,6 +83,13 @@ namespace Nhlpa.Sql
             }
         }
 
+        /// <summary>
+        /// Execute paramterized query and manually cursor IDataReader.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>		
+        /// <param name="param"></param>
+        /// <returns></returns>
         public IDataReader Read(string sql, DbParams param = null)
         {
             try
@@ -109,7 +116,7 @@ namespace Nhlpa.Sql
             }
         }
 
-        private void Reset()
+        public void Dispose()
         {
             _connection.Close();
             _connection.Dispose();
