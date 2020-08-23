@@ -4,12 +4,12 @@ using System.Data;
 
 namespace Spiffy
 {
-    public class DbBatch : IDbBatch
+    public class DbUnit : IDbUnit
     {
         private readonly IDbConnection _connection;
         private readonly IDbTransaction _transaction;
 
-        public DbBatch(IDbConnection connection, IDbTransaction transaction)
+        public DbUnit(IDbConnection connection, IDbTransaction transaction)
         {
             _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -44,7 +44,7 @@ namespace Spiffy
             }
         }
 
-        public int Exec(string sql, DbParams param = null)
+        public int Exec(string sql, DbCommandParams param = null)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace Spiffy
             }
         }
 
-        public IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map, DbParams param = null)
+        public IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Spiffy
             }
         }
 
-        public T QuerySingle<T>(string sql, Func<IDataReader, T> map, DbParams param = null)
+        public T QuerySingle<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Spiffy
         /// <param name="sql"></param>		
         /// <param name="param"></param>
         /// <returns></returns>
-        public IDataReader Read(string sql, DbParams param = null)
+        public IDataReader Read(string sql, DbCommandParams param = null)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace Spiffy
             }
         }
 
-        public T Val<T>(string sql, DbParams param = null)
+        public T Val<T>(string sql, DbCommandParams param = null)
         {
             try
             {

@@ -13,14 +13,14 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        internal static IDbCommand NewCommand(this IDbTransaction tran, string sql, DbParams param = null)
+        internal static IDbCommand NewCommand(this IDbTransaction tran, string sql, DbCommandParams param = null)
         {
             var cmd = tran.Connection.CreateCommand();
             cmd.Transaction = tran;
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = sql;
 
-            foreach (var p in param ?? new DbParams())
+            foreach (var p in param ?? new DbCommandParams())
             {
                 var cmdParam = cmd.CreateParameter();
                 cmdParam.ParameterName = p.Key;

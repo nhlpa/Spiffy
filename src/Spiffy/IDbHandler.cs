@@ -13,7 +13,7 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        int Exec(string sql, DbParams param = null);
+        int Exec(string sql, DbCommandParams param = null);
 
         /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
@@ -24,7 +24,7 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map, DbParams param = null);
+        IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null);
 
         /// <summary>
         /// Execute paramterized query, read only first record and apply mapping.
@@ -35,7 +35,7 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        T QuerySingle<T>(string sql, Func<IDataReader, T> map, DbParams param = null);
+        T QuerySingle<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null);
 
         /// <summary>
         /// Execute parameterized query and return single-value.
@@ -45,6 +45,6 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        T Val<T>(string sql, DbParams param = null);
+        T Val<T>(string sql, DbCommandParams param = null);
     }
 }

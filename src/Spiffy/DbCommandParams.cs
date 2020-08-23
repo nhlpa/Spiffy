@@ -5,13 +5,13 @@ namespace Spiffy
     /// <summary>
     /// A container for database bound parameters.
     /// </summary>
-    public class DbParams : Dictionary<string, object>
+    public class DbCommandParams : Dictionary<string, object>
     {
-        public DbParams()
+        public DbCommandParams()
         {
         }
 
-        public DbParams(string key, object value)
+        public DbCommandParams(string key, object value)
         {
             if (!this.ContainsKey(key))
             {

@@ -6,7 +6,7 @@ namespace Spiffy
     /// <summary>
     /// Database unit of work.
     /// </summary>
-    public interface IDbBatch : IDbHandler, IDisposable
+    public interface IDbUnit : IDbHandler, IDisposable
     {
         /// <summary>
         /// Commit transaction & cleanup.
@@ -25,6 +25,6 @@ namespace Spiffy
         /// <param name="sql"></param>		
         /// <param name="param"></param>
         /// <returns></returns>
-        IDataReader Read(string sql, DbParams param = null);
+        IDataReader Read(string sql, DbCommandParams param = null);
     }
 }
