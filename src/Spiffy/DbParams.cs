@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nhlpa.Sql
+namespace Spiffy
 {
     /// <summary>
     /// A container for database bound parameters.

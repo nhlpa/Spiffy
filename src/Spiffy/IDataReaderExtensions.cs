@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace Nhlpa.Sql
+namespace Spiffy
 {
     public static class IDataReaderExtensions
     {

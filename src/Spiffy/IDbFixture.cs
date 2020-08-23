@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Nhlpa.Sql
+namespace Spiffy
 {
     /// <summary>
     /// Represents a connection interface to a specific database.

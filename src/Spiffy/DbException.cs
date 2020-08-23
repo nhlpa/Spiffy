@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nhlpa.Sql
+namespace Spiffy
 {
     public enum DbErrorCode
     {

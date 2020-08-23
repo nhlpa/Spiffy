@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nhlpa.Sql
+namespace Spiffy
 {    
     /// <summary>
     /// Represents an interface to a specific database.

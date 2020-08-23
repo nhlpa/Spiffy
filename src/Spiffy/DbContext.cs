@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace Nhlpa.Sql
+namespace Spiffy
 {
     public class DbContext<TFixture> : IDbContext<TFixture> where TFixture : IDbFixture
     {
