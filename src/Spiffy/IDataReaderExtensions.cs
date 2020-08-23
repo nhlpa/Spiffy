@@ -7,18 +7,18 @@ namespace Spiffy
     {
         /// <summary>
         /// Safely retrieve and convert value. 
-        /// Throws ArgumentNullException on NULL value.
+        /// Throws IndexOutOfRangeException on missing fieldName.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="rd"></param>
-        /// <param name="fieldname"></param>
+        /// <param name="fieldName"></param>
         /// <returns></returns>
-        public static T Get<T>(this IDataReader rd, string fieldname)
+        public static T Get<T>(this IDataReader rd, string fieldName)
         {
-            return Common.ChangeType<T>(rd.GetValue(fieldname));
+            return Common.ChangeType<T>(rd.GetValue(fieldName));
         }
 
-        private static object GetValue(this IDataReader rd, string fieldname)
+        private static object GetValue(this IDataReader rd, string fieldName)
         {
             if (rd == null)
             {
@@ -27,7 +27,7 @@ namespace Spiffy
 
             try
             {
-                var i = rd.GetOrdinal(fieldname);
+                var i = rd.GetOrdinal(fieldName);
 
                 if (rd.IsDBNull(i))
                 {
@@ -38,7 +38,7 @@ namespace Spiffy
             }
             catch (IndexOutOfRangeException ex)
             {
-                throw new IndexOutOfRangeException($"The column '{fieldname}' was not found.", ex);
+                throw new IndexOutOfRangeException($"The column '{fieldName}' was not found.", ex);
             }
         }
     }
