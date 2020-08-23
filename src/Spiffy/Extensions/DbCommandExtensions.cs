@@ -1,19 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Spiffy
 {
-    internal static class IDbCommandExtensions
+    internal static class DbCommandExtensions
     {
-
         /// <summary>
         /// Execute parameterized query and return rows affected.
         /// </summary>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        internal static int Exec(this IDbCommand cmd) =>
-          cmd.TryExecuteNonQuery();
+        internal static int Exec(this DbCommand cmd)
+        {
+            try
+            {
+                return cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
+            }
+        }
 
         /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
@@ -22,7 +33,7 @@ namespace Spiffy
         /// <param name="cmd"></param>
         /// <param name="map"></param>
         /// <returns></returns>
-        internal static IEnumerable<T> Query<T>(this IDbCommand cmd, Func<IDataReader, T> map)
+        internal static IEnumerable<T> Query<T>(this DbCommand cmd, Func<IDataReader, T> map)
         {
             using (var rd = cmd.TryExecuteReader())
             {
@@ -44,7 +55,7 @@ namespace Spiffy
         /// <param name="cmd"></param>
         /// <param name="map"></param>
         /// <returns></returns>
-        internal static T QuerySingle<T>(this IDbCommand cmd, Func<IDataReader, T> map)
+        internal static T QuerySingle<T>(this DbCommand cmd, Func<IDataReader, T> map)
         {
             using (var rd = cmd.TryExecuteReader())
             {
@@ -62,7 +73,7 @@ namespace Spiffy
         /// <summary>
         /// Execute paramterized query and manually cursor IDataReader.
         /// </summary>
-        internal static IDataReader Read(this IDbCommand cmd) =>
+        internal static IDataReader Read(this DbCommand cmd) =>
           cmd.TryExecuteReader();
 
         /// <summary>
@@ -71,22 +82,7 @@ namespace Spiffy
         /// <typeparam name="T"></typeparam>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        internal static T Val<T>(this IDbCommand cmd) =>
-          cmd.TryExecuteScalar<T>();
-
-        private static int TryExecuteNonQuery(this IDbCommand cmd)
-        {
-            try
-            {
-                return cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
-            }
-        }
-
-        private static T TryExecuteScalar<T>(this IDbCommand cmd)
+        internal static T Scalar<T>(this DbCommand cmd)
         {
             try
             {
@@ -98,7 +94,24 @@ namespace Spiffy
             }
         }
 
-        private static IDataReader TryExecuteReader(this IDbCommand cmd)
+        /// <summary>
+        /// Execute parameterized query and return rows affected.
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        internal async static Task<int> ExecAsync(this DbCommand cmd)
+        {
+            try
+            {
+                return await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
+            }
+        }
+
+        private static IDataReader TryExecuteReader(this DbCommand cmd)
         {
             try
             {

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 
 namespace Spiffy
 {
     internal static class IDbTransactionExtensions
     {
-
         /// <summary>
         /// Create a new IDbCommand.
         /// </summary>
@@ -13,8 +13,8 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        internal static IDbCommand NewCommand(this IDbTransaction tran, string sql, DbCommandParams param = null)
-        {
+        internal static DbCommand NewCommand(this IDbTransaction tran, string sql, DbCommandParams param = null)
+        {            
             var cmd = tran.Connection.CreateCommand();
             cmd.Transaction = tran;
             cmd.CommandType = CommandType.Text;
@@ -28,7 +28,7 @@ namespace Spiffy
                 cmd.Parameters.Add(cmdParam);
             }
 
-            return cmd;
+            return cmd as DbCommand;
         }
     }
 }

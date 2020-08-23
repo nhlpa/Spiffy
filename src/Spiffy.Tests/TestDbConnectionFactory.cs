@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Spiffy.Tests
 {
-    internal class TestDbFixture : IDbConnectionFactory
+    internal class TestDbConnectionFactory : IDbConnectionFactory
     {
         private const string _connectionString = "Data Source=:memory:;Version=3;New=true;";
 

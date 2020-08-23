@@ -9,12 +9,12 @@ namespace Spiffy
     public interface IDbUnit : IDbHandler, IDisposable
     {
         /// <summary>
-        /// Commit transaction & cleanup.
+        /// Commit unit of work.
         /// </summary>
         void Commit();
 
         /// <summary>
-        /// Rollback transaction & cleanup.
+        /// Rollback unit of work.
         /// <summary>
         void Rollback();
 

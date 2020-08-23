@@ -6,7 +6,7 @@ using Xunit;
 namespace Spiffy.Tests
 {
     [CollectionDefinition("DbFixture")]
-    internal class DbCollection : ICollectionFixture<TestDbFixture>
+    internal class DbCollection : ICollectionFixture<TestDbConnectionFactory>
     {
         //private readonly IDbContext<TestDbFixture> _db;
 
