@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Data.Common;
+﻿using System.Data;
 
 namespace Spiffy
 {
@@ -13,22 +11,17 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        internal static DbCommand NewCommand(this IDbTransaction tran, string sql, DbCommandParams param = null)
+        internal static IDbCommand NewCommand(this IDbTransaction tran, string sql, DbParams param = null)
         {            
             var cmd = tran.Connection.CreateCommand();
             cmd.Transaction = tran;
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = sql;
 
-            foreach (var p in param ?? new DbCommandParams())
-            {
-                var cmdParam = cmd.CreateParameter();
-                cmdParam.ParameterName = p.Key;
-                cmdParam.Value = p.Value ?? DBNull.Value;
-                cmd.Parameters.Add(cmdParam);
-            }
+            if (param != null && param.Count > 0)
+                cmd.AddDbParams(param);
 
-            return cmd as DbCommand;
+            return cmd;
         }
     }
 }

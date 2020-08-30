@@ -9,7 +9,7 @@ namespace Spiffy
     public interface IDbFixture<TFixture> : IDbHandler where TFixture : IDbConnectionFactory
     {
         /// <summary>
-        /// Create a new IDbBatch, which represents a database unit of work.
+        /// Create a new IDbUnit, which represents a database unit of work.
         /// </summary>
         /// <returns></returns>
         IDbUnit NewBatch();        

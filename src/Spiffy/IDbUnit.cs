@@ -25,6 +25,6 @@ namespace Spiffy
         /// <param name="sql"></param>		
         /// <param name="param"></param>
         /// <returns></returns>
-        IDataReader Read(string sql, DbCommandParams param = null);
+        IDataReader Read(string sql, DbParams param = null);
     }
 }

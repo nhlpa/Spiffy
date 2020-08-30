@@ -19,7 +19,7 @@ namespace Spiffy
 
         /// <summary>
         /// Commit unit of work & cleanup.
-        /// Throws FailedCommitBatchException on failure
+        /// Rolls back transaction and throws FailedCommitBatchException on failure
         /// </summary>
         public void Commit()
         {
@@ -60,7 +60,7 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public int Exec(string sql, DbCommandParams param = null) =>
+        public int Exec(string sql, DbParams param = null) =>
             Do(sql, param, cmd => cmd.Exec());
 
         /// <summary>
@@ -72,8 +72,18 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null) =>
+        public IEnumerable<T> Query<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
             Do(sql, param, cmd => cmd.Query(map));
+
+        /// <summary>
+        /// Execute query, enumerate all records and apply mapping.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map) =>
+            Do(sql, DbParams.Empty, cmd => cmd.Query(map));
 
         /// <summary>
         /// Execute paramterized query, read only first record and apply mapping.
@@ -84,8 +94,18 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public T QuerySingle<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null) =>
+        public T QuerySingle<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
             Do(sql, param, cmd => cmd.QuerySingle(map));
+
+        /// <summary>
+        /// Execute query, read only first record and apply mapping.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public T QuerySingle<T>(string sql, Func<IDataReader, T> map) =>
+            Do(sql, DbParams.Empty, cmd => cmd.QuerySingle(map));
 
         /// <summary>
         /// Execute paramterized query and manually cursor IDataReader.
@@ -94,7 +114,7 @@ namespace Spiffy
         /// <param name="sql"></param>		
         /// <param name="param"></param>
         /// <returns></returns>
-        public IDataReader Read(string sql, DbCommandParams param = null) =>
+        public IDataReader Read(string sql, DbParams param = null) =>
             Do(sql, param, cmd => cmd.Read());
 
         /// <summary>
@@ -105,7 +125,7 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public T Scalar<T>(string sql, DbCommandParams param = null) =>
+        public T Scalar<T>(string sql, DbParams param = null) =>
             Do(sql, param, cmd => cmd.Scalar<T>());
 
         /// <summary>
@@ -115,7 +135,7 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public Task<int> ExecAsync(string sql, DbCommandParams param = null) =>
+        public Task<int> ExecAsync(string sql, DbParams param = null) =>
             DoAsync(sql, param, cmd => cmd.ExecAsync());
 
         /// <summary>
@@ -127,7 +147,17 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null) =>
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
+            throw new NotImplementedException();
+
+        /// <summary>
+        /// Asynchronously execute query, enumerate all records and apply mapping./// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, Func<IDataReader, T> map) =>
             throw new NotImplementedException();
 
         /// <summary>
@@ -139,7 +169,17 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map, DbCommandParams param = null) =>
+        public Task<T> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
+            throw new NotImplementedException();
+
+        /// <summary>
+        /// Asynchronously execute query, read only first record and apply mapping.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map) =>
             throw new NotImplementedException();
 
         /// <summary>
@@ -150,7 +190,7 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public Task<T> ScalarAsync<T>(string sql, DbCommandParams param = null) =>
+        public Task<T> ScalarAsync<T>(string sql, DbParams param = null) =>
             throw new NotImplementedException();
 
         public void Dispose()
@@ -160,11 +200,11 @@ namespace Spiffy
             _transaction.Dispose();
         }
 
-        private T Do<T>(string sql, DbCommandParams param, Func<DbCommand, T> func)
+        private T Do<T>(string sql, DbParams param, Func<DbCommand, T> func)
         {
             try
             {
-                var cmd = _transaction.NewCommand(sql, param);
+                var cmd = _transaction.NewCommand(sql, param) as DbCommand;
                 return func(cmd);
             }
             catch (FailedExecutionException)
@@ -174,11 +214,11 @@ namespace Spiffy
             }
         }
 
-        private async Task<T> DoAsync<T>(string sql, DbCommandParams param, Func<DbCommand, Task<T>> func)
+        private async Task<T> DoAsync<T>(string sql, DbParams param, Func<DbCommand, Task<T>> func)
         {
             try
             {
-                var cmd = _transaction.NewCommand(sql, param);
+                var cmd = _transaction.NewCommand(sql, param) as DbCommand;
                 return await func(cmd);
             }
             catch (FailedExecutionException)
