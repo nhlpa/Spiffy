@@ -24,7 +24,7 @@
 
     <!-- NuGet config -->
     <PackageId>Spiffy</PackageId>
-    <PackageVersion>1.0.0-alpha1</PackageVersion>
+    <PackageVersion>1.0.0</PackageVersion>
     <PackageTags>database;sql;ado;adonet;data access;repository;dapper</PackageTags>
     <PackageProjectUrl>https://github.com/pimbrouwers/Spiffy</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
