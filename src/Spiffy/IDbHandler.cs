@@ -17,6 +17,16 @@ namespace Spiffy
         int Exec(string sql, DbParams param = null);
 
         /// <summary>
+        /// Execute parameterized query and return single-value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="batch"></param>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        object Scalar(string sql, DbParams param = null);
+
+        /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -56,17 +66,6 @@ namespace Spiffy
         /// <returns></returns>
         T QuerySingle<T>(string sql, Func<IDataReader, T> map);
 
-
-        /// <summary>
-        /// Execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        T Scalar<T>(string sql, DbParams param = null);
-
         /// <summary>
         /// Asynchronously execute parameterized query and return rows affected.
         /// </summary>
@@ -75,6 +74,16 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         Task<int> ExecAsync(string sql, DbParams param = null);
+
+        /// <summary>
+        /// Asynchronously execute parameterized query and return single-value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="batch"></param>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<object> ScalarAsync(string sql, DbParams param = null);
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
@@ -115,16 +124,5 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <returns></returns>
         Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map);
-
-
-        /// <summary>
-        /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task<T> ScalarAsync<T>(string sql, DbParams param = null);
     }
 }

@@ -93,11 +93,11 @@ namespace Spiffy
         /// <typeparam name="T"></typeparam>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        internal static T Scalar<T>(this IDbCommand cmd)
+        internal static object Scalar(this IDbCommand cmd)
         {
             try
             {
-                return Common.ChangeType<T>(cmd.ExecuteScalar());
+                return cmd.ExecuteScalar();
             }
             catch (Exception ex)
             {

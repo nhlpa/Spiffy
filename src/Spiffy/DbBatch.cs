@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Spiffy
 {
-    public class DbUnit : IDbUnit
+    public class DbBatch : IDbBatch
     {
         private readonly IDbConnection _connection;
         private readonly IDbTransaction _transaction;
 
-        public DbUnit(IDbConnection connection, IDbTransaction transaction)
+        public DbBatch(IDbConnection connection, IDbTransaction transaction)
         {
             _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -64,6 +64,17 @@ namespace Spiffy
             Do(sql, param, cmd => cmd.Exec());
 
         /// <summary>
+        /// Execute parameterized query and return single-value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="batch"></param>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public object Scalar(string sql, DbParams param = null) =>
+            Do(sql, param, cmd => cmd.Scalar());
+
+        /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -83,7 +94,7 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <returns></returns>
         public IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map) =>
-            Do(sql, DbParams.Empty, cmd => cmd.Query(map));
+            Query(sql, DbParams.Empty, map);
 
         /// <summary>
         /// Execute paramterized query, read only first record and apply mapping.
@@ -105,7 +116,7 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <returns></returns>
         public T QuerySingle<T>(string sql, Func<IDataReader, T> map) =>
-            Do(sql, DbParams.Empty, cmd => cmd.QuerySingle(map));
+            QuerySingle(sql, DbParams.Empty, map);
 
         /// <summary>
         /// Execute paramterized query and manually cursor IDataReader.
@@ -118,17 +129,6 @@ namespace Spiffy
             Do(sql, param, cmd => cmd.Read());
 
         /// <summary>
-        /// Execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public T Scalar<T>(string sql, DbParams param = null) =>
-            Do(sql, param, cmd => cmd.Scalar<T>());
-
-        /// <summary>
         /// Asynchronously execute parameterized query and return rows affected.
         /// </summary>
         /// <param name="batch"></param>
@@ -137,6 +137,17 @@ namespace Spiffy
         /// <returns></returns>
         public Task<int> ExecAsync(string sql, DbParams param = null) =>
             DoAsync(sql, param, cmd => cmd.ExecAsync());
+
+        /// <summary>
+        /// Asynchronously execute parameterized query and return single-value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="batch"></param>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public Task<object> ScalarAsync(string sql, DbParams param = null) =>
+            throw new NotImplementedException();
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
@@ -180,17 +191,6 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <returns></returns>
         public Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map) =>
-            throw new NotImplementedException();
-
-        /// <summary>
-        /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public Task<T> ScalarAsync<T>(string sql, DbParams param = null) =>
             throw new NotImplementedException();
 
         public void Dispose()

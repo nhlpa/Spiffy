@@ -6,7 +6,7 @@ namespace Spiffy
     /// <summary>
     /// Database unit of work.
     /// </summary>
-    public interface IDbUnit : IDbHandler, IDisposable
+    public interface IDbBatch : IDbHandler, IDisposable
     {
         /// <summary>
         /// Commit unit of work.

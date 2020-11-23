@@ -25,7 +25,9 @@ namespace Spiffy.Tests
             {
                 { "key", 1 }
             };
+            p.Add("key2", 2);
             Assert.Equal(1, p["key"]);
+            Assert.Equal(2, p["key2"]);
         }
     }
 }
