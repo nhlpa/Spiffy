@@ -24,7 +24,7 @@
 
     <!-- NuGet config -->
     <PackageId>Spiffy</PackageId>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>1.2.0</PackageVersion>
     <PackageTags>database;sql;ado;adonet;data access;repository;dapper;async;sql server;sqlite</PackageTags>
     <PackageProjectUrl>https://github.com/pimbrouwers/Spiffy</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -46,11 +46,11 @@
     <Compile Include="Extensions\IDataReaderExtensions.cs" />
     <Compile Include="Extensions\IDbCommandExtensions.cs" />
     <Compile Include="Extensions\IDbConnectionExtensions.cs" />
-    <Compile Include="Extensions\IDbTransactionExtensions.cs" />
     <Compile Include="IDbBatch.cs" />
     <Compile Include="IDbConnectionFactory.cs" />
     <Compile Include="IDbFixture.cs" />
     <Compile Include="IDbHandler.cs" />
+    <Compile Include="IDbHandlerAsync.cs" />
   </ItemGroup>
 
 </Project>

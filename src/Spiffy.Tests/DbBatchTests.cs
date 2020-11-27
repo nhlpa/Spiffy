@@ -70,6 +70,7 @@ namespace Spiffy.Tests
             var param = new DbParams("description", expected);
 
             var batch = _db.NewBatch();
+            
             var result = batch.Query(sql, param, rd => rd.GetString("description"));
             batch.Commit();
 

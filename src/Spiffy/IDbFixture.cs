@@ -6,7 +6,7 @@ namespace Spiffy
     /// Represents an interface to a specific database.
     /// </summary>
     /// <typeparam name="TFixture"></typeparam>
-    public interface IDbFixture<TFixture> : IDbHandler where TFixture : IDbConnectionFactory
+    public interface IDbFixture<TFixture> : IDbHandler, IDbHandlerAsync where TFixture : IDbConnectionFactory
     {
         /// <summary>
         /// Create a new IDbBatch, which represents a database unit of work.

@@ -71,6 +71,15 @@ namespace Spiffy
             Do(sql, param, cmd => cmd.Exec());
 
         /// <summary>
+        /// Execute parameterized query and return rows affected.
+        /// </summary>        
+        /// <param name="sql"></param>
+        /// <param name="paramList"></param>
+        /// <returns></returns>
+        public void ExecMany(string sql, IEnumerable<DbParams> paramList) =>
+            DoMany(sql, paramList, cmd => cmd.Exec());
+       
+        /// <summary>
         /// Execute parameterized query and return single-value.
         /// </summary>        
         /// <param name="sql"></param>
@@ -138,6 +147,16 @@ namespace Spiffy
         /// <returns></returns>
         public Task<int> ExecAsync(string sql, DbParams param = null) =>
             DoAsync(sql, param, cmd => cmd.ExecAsync());
+
+        /// <summary>
+        /// Execute parameterized query and return rows affected.
+        /// </summary>        
+        /// <param name="sql"></param>
+        /// <param name="paramList"></param>
+        /// <returns></returns>
+        public Task ExecManyAsync(string sql, IEnumerable<DbParams> paramList) =>
+            DoManyAsync(sql, paramList, cmd => cmd.ExecAsync());
+
 
         /// <summary>
         /// Asynchronously execute parameterized query and return single-value.
@@ -213,7 +232,7 @@ namespace Spiffy
         {
             try
             {
-                var cmd = _transaction.NewCommand(sql, param);
+                var cmd = _connection.NewCommand(_transaction, sql, param);
                 return func(cmd);
             }
             catch (FailedExecutionException)
@@ -227,8 +246,48 @@ namespace Spiffy
         {
             try
             {
-                var cmd = _transaction.NewCommand(sql, param) as DbCommand;
+                var cmd = _connection.NewCommand(_transaction, sql, param) as DbCommand;
                 return await func(cmd);
+            }
+            catch (FailedExecutionException)
+            {
+                Rollback();
+                throw;
+            }
+        }
+
+        private void DoMany(string sql, IEnumerable<DbParams> paramList, Action<IDbCommand> func)
+        {
+            try
+            {
+                var cmd = _connection.NewCommand(_transaction, sql);
+
+                foreach (var param in paramList)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.AddDbParams(param);
+                    func(cmd);
+                }
+            }
+            catch (FailedExecutionException)
+            {
+                Rollback();
+                throw;
+            }
+        }
+
+        private async Task DoManyAsync(string sql, IEnumerable<DbParams> paramList, Func<DbCommand, Task> func)
+        {
+            try
+            {
+                var cmd = _connection.NewCommand(_transaction, sql) as DbCommand;
+
+                foreach (var param in paramList)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.AddDbParams(param);
+                    await func(cmd);
+                }
             }
             catch (FailedExecutionException)
             {

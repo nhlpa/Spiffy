@@ -46,7 +46,16 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public int Exec(string sql, DbParams param = null) =>
-            Do(b => b.Exec(sql, param));
+            Batch(b => b.Exec(sql, param));
+
+        /// <summary>
+        /// Execute parameterized query multiple times
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public void ExecMany(string sql, IEnumerable<DbParams> param) =>
+            Do(b => b.ExecMany(sql, param));
 
         /// <summary>
         /// Execute parameterized query and return single-value.
@@ -55,7 +64,7 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public object Scalar(string sql, DbParams param = null) =>
-            Do(b => b.Scalar(sql, param));
+            Batch(b => b.Scalar(sql, param));
 
         /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
@@ -66,7 +75,7 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public IEnumerable<T> Query<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-            Do(b => b.Query(sql, param, map));
+            Batch(b => b.Query(sql, param, map));
 
         /// <summary>
         /// Execute query, enumerate all records and apply mapping.
@@ -76,7 +85,7 @@ namespace Spiffy
         /// <param name="map"></param>
         /// <returns></returns>
         public IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map) =>
-            Do(b => b.Query(sql, map));
+            Batch(b => b.Query(sql, map));
 
         /// <summary>
         /// Execute paramterized query, read only first record and apply mapping.
@@ -87,7 +96,7 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public T QuerySingle<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-            Do(b => b.QuerySingle(sql, param, map));
+            Batch(b => b.QuerySingle(sql, param, map));
 
         /// <summary>
         /// Execute query, read only first record and apply mapping.
@@ -97,7 +106,7 @@ namespace Spiffy
         /// <param name="map"></param>        
         /// <returns></returns>
         public T QuerySingle<T>(string sql, Func<IDataReader, T> map) =>
-            Do(b => b.QuerySingle(sql, map));
+            Batch(b => b.QuerySingle(sql, map));
 
         /// <summary>
         /// Asynchronously execute parameterized query and return rows affected.
@@ -106,7 +115,16 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public Task<int> ExecAsync(string sql, DbParams param = null) =>
-            DoAsync(b => b.ExecAsync(sql, param));
+            BatchAsync(b => b.ExecAsync(sql, param));
+
+        /// <summary>
+        /// Asynchronously execute parameterized query and return rows affected.
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="paramList"></param>
+        /// <returns></returns>
+        public Task ExecManyAsync(string sql, IEnumerable<DbParams> paramList) =>
+            DoAsync(b => b.ExecManyAsync(sql, paramList));
 
         /// <summary>
         /// Asynchronously execute parameterized query and return single-value.
@@ -115,7 +133,7 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public Task<object> ScalarAsync(string sql, DbParams param = null) =>
-            DoAsync(b => b.ScalarAsync(sql, param));
+            BatchAsync(b => b.ScalarAsync(sql, param));
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
@@ -126,7 +144,7 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public Task<IEnumerable<T>> QueryAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-            DoAsync(b => b.QueryAsync(sql, param, map));
+            BatchAsync(b => b.QueryAsync(sql, param, map));
 
         /// <summary>
         /// Asynchronously execute query, enumerate all records and apply mapping.
@@ -136,7 +154,7 @@ namespace Spiffy
         /// <param name="map"></param>        
         /// <returns></returns>
         public Task<IEnumerable<T>> QueryAsync<T>(string sql, Func<IDataReader, T> map) =>
-            DoAsync(b => b.QueryAsync(sql, map));
+            BatchAsync(b => b.QueryAsync(sql, map));
 
         /// <summary>
         /// Asynchronously execute paramterized query, read only first record and apply mapping.
@@ -147,7 +165,7 @@ namespace Spiffy
         /// <param name="param"></param>
         /// <returns></returns>
         public Task<T> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-            DoAsync(b => b.QuerySingleAsync(sql, param, map));
+            BatchAsync(b => b.QuerySingleAsync(sql, param, map));
 
         /// <summary>
         /// Asynchronously execute query, read only first record and apply mapping.
@@ -157,9 +175,9 @@ namespace Spiffy
         /// <param name="map"></param>        
         /// <returns></returns>
         public Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map) =>
-            DoAsync(b => b.QuerySingleAsync(sql, map));
+            BatchAsync(b => b.QuerySingleAsync(sql, map));
 
-        private T Do<T>(Func<IDbBatch, T> func)
+        private T Batch<T>(Func<IDbBatch, T> func)
         {
             var batch = NewBatch();
             var result = func(batch);
@@ -167,12 +185,26 @@ namespace Spiffy
             return result;
         }
 
-        private async Task<T> DoAsync<T>(Func<IDbBatch, Task<T>> func)
+        private async Task<T> BatchAsync<T>(Func<IDbBatch, Task<T>> func)
         {
             var batch = NewBatch();
             var result = await func(batch);
             batch.Commit();
             return result;
+        }
+
+        private void Do(Action<IDbBatch> func)
+        {
+            var batch = NewBatch();
+            func(batch);
+            batch.Commit();            
+        }
+
+        private async Task DoAsync(Func<IDbBatch, Task> func)
+        {
+            var batch = NewBatch();
+            await func(batch);
+            batch.Commit();
         }
     }
 }
