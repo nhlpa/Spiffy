@@ -21,13 +21,13 @@ Spiffy **is not an ORM**, encouraging you to take back control of your mappings.
 Install the Donald NuGet package:
 
 ```
-PM>  Install-Package Donald
+PM>  Install-Package Spiffy
 ```
 
 Or using the dotnet CLI
 
 ```
-dotnet add package Donald
+dotnet add package Spiffy
 ```
 
 ## An Example using SQLite
