@@ -7,10 +7,16 @@ namespace Spiffy
     /// </summary>
     public class DbParams : Dictionary<string, object>
     {        
+        /// <summary>
+        /// Initialize a new instance of the DbParams class
+        /// </summary>
         public DbParams()
         {        
         }
 
+        /// <summary>
+        /// Initialize a new instance of the DbParams class from a key and value
+        /// </summary>
         public DbParams(string key, object value)
         {
             if (!this.ContainsKey(key))
@@ -18,7 +24,5 @@ namespace Spiffy
                 this[key] = value;
             }
         }
-
-        public static DbParams Empty => new DbParams();
     }
 }

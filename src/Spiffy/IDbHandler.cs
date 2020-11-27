@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 
 namespace Spiffy
 {
+    /// <summary>
+    /// Represents the ability to do work against a data source.
+    /// </summary>
     public interface IDbHandler
     {
         /// <summary>
         /// Execute parameterized query and return rows affected.
-        /// </summary>
-        /// <param name="batch"></param>
+        /// </summary>        
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -18,9 +20,7 @@ namespace Spiffy
 
         /// <summary>
         /// Execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// </summary>        
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -29,8 +29,7 @@ namespace Spiffy
         /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// <typeparam name="T"></typeparam>        
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>
@@ -49,8 +48,7 @@ namespace Spiffy
         /// <summary>
         /// Execute paramterized query, read only first record and apply mapping.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// <typeparam name="T"></typeparam>        
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>
@@ -68,8 +66,7 @@ namespace Spiffy
 
         /// <summary>
         /// Asynchronously execute parameterized query and return rows affected.
-        /// </summary>
-        /// <param name="batch"></param>
+        /// </summary>        
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -77,9 +74,7 @@ namespace Spiffy
 
         /// <summary>
         /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// </summary>              
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -88,8 +83,7 @@ namespace Spiffy
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// <typeparam name="T"></typeparam>        
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>
@@ -108,8 +102,7 @@ namespace Spiffy
         /// <summary>
         /// Asynchronously execute paramterized query, read only first record and apply mapping.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// <typeparam name="T"></typeparam>        
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>

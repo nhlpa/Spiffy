@@ -17,7 +17,7 @@
     <!-- Build config -->
     <DebugType>portable</DebugType>
     <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -36,5 +36,21 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="DbBatch.cs" />
+    <Compile Include="DbException.cs" />
+    <Compile Include="DbFixture.cs" />
+    <Compile Include="DbParams.cs" />
+    <Compile Include="Extensions\DbCommandAsyncExtensions.cs" />
+    <Compile Include="Extensions\IDataReaderExtensions.cs" />
+    <Compile Include="Extensions\IDbCommandExtensions.cs" />
+    <Compile Include="Extensions\IDbConnectionExtensions.cs" />
+    <Compile Include="Extensions\IDbTransactionExtensions.cs" />
+    <Compile Include="IDbBatch.cs" />
+    <Compile Include="IDbConnectionFactory.cs" />
+    <Compile Include="IDbFixture.cs" />
+    <Compile Include="IDbHandler.cs" />
+  </ItemGroup>
 
 </Project>

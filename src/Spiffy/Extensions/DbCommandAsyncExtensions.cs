@@ -1,32 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Spiffy
 {
-    internal static class IDbCommandExtensions
-    {
-        internal static void AddDbParams(this IDbCommand cmd, DbParams param)
-        {
-            foreach (var p in param)
-            {
-                var cmdParam = cmd.CreateParameter();
-                cmdParam.ParameterName = p.Key;
-                cmdParam.Value = p.Value ?? DBNull.Value;
-                cmd.Parameters.Add(cmdParam);
-            }
-        }
-
+    internal static class DbCommandAsyncExtensions
+    {        
         /// <summary>
-        /// Execute parameterized query and return rows affected.
+        /// Asynchronously execute parameterized query and return rows affected.
         /// </summary>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        internal static int Exec(this IDbCommand cmd)
+        internal async static Task<int> ExecAsync(this DbCommand cmd)
         {
             try
             {
-                return cmd.ExecuteNonQuery();
+                return await cmd.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
             {
@@ -35,15 +27,15 @@ namespace Spiffy
         }
 
         /// <summary>
-        /// Execute parameterized query, enumerate all records and apply mapping.
+        /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="cmd"></param>
         /// <param name="map"></param>
         /// <returns></returns>
-        internal static IEnumerable<T> Query<T>(this IDbCommand cmd, Func<IDataReader, T> map)
+        internal async static Task<IEnumerable<T>> QueryAsync<T>(this DbCommand cmd, Func<IDataReader, T> map)
         {
-            using (var rd = cmd.TryExecuteReader())
+            using (var rd = await cmd.TryExecuteReaderAsync())
             {
                 var records = new HashSet<T>();
 
@@ -57,15 +49,15 @@ namespace Spiffy
         }
 
         /// <summary>
-        /// Execute paramterized query, read only first record and apply mapping.
+        /// Asynchronously execute paramterized query, read only first record and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="cmd"></param>
         /// <param name="map"></param>
         /// <returns></returns>
-        internal static T QuerySingle<T>(this IDbCommand cmd, Func<IDataReader, T> map)
+        internal async static Task<T> QuerySingleAsync<T>(this DbCommand cmd, Func<IDataReader, T> map)
         {
-            using (var rd = cmd.TryExecuteReader())
+            using (var rd = await cmd.TryExecuteReaderAsync())
             {
                 if (rd.Read())
                 {
@@ -79,21 +71,21 @@ namespace Spiffy
         }
 
         /// <summary>
-        /// Execute paramterized query and manually cursor IDataReader.
+        /// Asynchronously execute paramterized query and manually cursor IDataReader.
         /// </summary>
-        internal static IDataReader Read(this IDbCommand cmd) =>
-          cmd.TryExecuteReader();
+        internal async static Task<IDataReader> ReadAsync(this DbCommand cmd) =>
+          await cmd.TryExecuteReaderAsync();
 
         /// <summary>
-        /// Execute parameterized query and return single-value.
+        /// Asynchronously execute parameterized query and return single-value.
         /// </summary>        
         /// <param name="cmd"></param>
         /// <returns></returns>
-        internal static object Scalar(this IDbCommand cmd)
+        internal async static Task<object> ScalarAsync(this DbCommand cmd)
         {
             try
             {
-                return cmd.ExecuteScalar();
+                return await cmd.ExecuteScalarAsync();
             }
             catch (Exception ex)
             {
@@ -101,11 +93,11 @@ namespace Spiffy
             }
         }
 
-        private static IDataReader TryExecuteReader(this IDbCommand cmd)
+        private async static Task<IDataReader> TryExecuteReaderAsync(this DbCommand cmd)
         {
             try
             {
-                return cmd.ExecuteReader();
+                return await cmd.ExecuteReaderAsync();
             }
             catch (Exception ex)
             {

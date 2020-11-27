@@ -15,6 +15,10 @@ namespace Spiffy
     {
         private readonly TConn _connectionFactory;
 
+        /// <summary>
+        /// Constitute a DbFixture from a IDbConnectionFactory
+        /// </summary>
+        /// <param name="connectionFactory"></param>
         public DbFixture(TConn connectionFactory)
         {
             if (connectionFactory == null)
@@ -38,7 +42,6 @@ namespace Spiffy
         /// <summary>
         /// Execute parameterized query and return rows affected.
         /// </summary>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -47,9 +50,7 @@ namespace Spiffy
 
         /// <summary>
         /// Execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// </summary>        
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -60,7 +61,6 @@ namespace Spiffy
         /// Execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>
@@ -82,7 +82,6 @@ namespace Spiffy
         /// Execute paramterized query, read only first record and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>
@@ -94,10 +93,8 @@ namespace Spiffy
         /// Execute query, read only first record and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
-        /// <param name="map"></param>
-        /// <param name="param"></param>
+        /// <param name="map"></param>        
         /// <returns></returns>
         public T QuerySingle<T>(string sql, Func<IDataReader, T> map) =>
             Do(b => b.QuerySingle(sql, map));
@@ -105,7 +102,6 @@ namespace Spiffy
         /// <summary>
         /// Asynchronously execute parameterized query and return rows affected.
         /// </summary>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -114,62 +110,54 @@ namespace Spiffy
 
         /// <summary>
         /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
+        /// </summary>        
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         public Task<object> ScalarAsync(string sql, DbParams param = null) =>
-            throw new NotImplementedException();
+            DoAsync(b => b.ScalarAsync(sql, param));
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         public Task<IEnumerable<T>> QueryAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-            throw new NotImplementedException();
+            DoAsync(b => b.QueryAsync(sql, param, map));
 
         /// <summary>
         /// Asynchronously execute query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
-        /// <param name="map"></param>
-        /// <param name="param"></param>
+        /// <param name="map"></param>        
         /// <returns></returns>
         public Task<IEnumerable<T>> QueryAsync<T>(string sql, Func<IDataReader, T> map) =>
-            throw new NotImplementedException();
+            DoAsync(b => b.QueryAsync(sql, map));
 
         /// <summary>
         /// Asynchronously execute paramterized query, read only first record and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
         /// <param name="map"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         public Task<T> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-            throw new NotImplementedException();
+            DoAsync(b => b.QuerySingleAsync(sql, param, map));
 
         /// <summary>
         /// Asynchronously execute query, read only first record and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="batch"></param>
         /// <param name="sql"></param>
-        /// <param name="map"></param>
-        /// <param name="param"></param>
+        /// <param name="map"></param>        
         /// <returns></returns>
         public Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map) =>
-            throw new NotImplementedException();
+            DoAsync(b => b.QuerySingleAsync(sql, map));
 
         private T Do<T>(Func<IDbBatch, T> func)
         {

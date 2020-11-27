@@ -2,8 +2,8 @@
 using System.Data;
 
 namespace Spiffy
-{
-    public static class IDbConnectionExtensions
+{    
+    internal static class IDbConnectionExtensions
     {
         /// <summary>
         /// Attempt to open the IDbConnection if it is not already open.
