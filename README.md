@@ -3,7 +3,7 @@
 [![NuGet Version](https://img.shields.io/nuget/v/Spiffy.svg)](https://www.nuget.org/packages/Spiffy)
 [![Build Status](https://travis-ci.org/pimbrouwers/Spiffy.svg?branch=master)](https://travis-ci.org/pimbrouwers/Spiffy)
 
-Spiffy is a library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) a lot simpler. 
+Spiffy is a well-tested library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) a lot simpler. 
 
 At it's core is a batch model, which encourages performing database-related work in **units**. It also extends your `IDbConnection` interface to enable a simple API for performing queries that will be automatically batched for you.
 
