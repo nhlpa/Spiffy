@@ -196,7 +196,7 @@ public static DateTime? GetNullableDateTime(this IDataReader rd, string field) =
 No matter how you slice it (cached or not) reflection is slow, brittle and hard to debug. As such, the library encourages you to define your mappings manually and aims to help you do this by extending the `IDataReader` interface with helpers to make retrieving values safer and more direct.
 
 ## Why "Spiffy"?
-It's an homage to [Dapper](https://github.com/StackExchange/Dapper) which was transformative in it's approach to database-bound workloads.
+It's an homage to [Dapper](https://github.com/StackExchange/Dapper) which was transformative in it's approach to database-bound workloads for .NET.
 
 ## Find a bug?
 
