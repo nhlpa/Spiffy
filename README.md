@@ -14,7 +14,7 @@ Spiffy **is not an ORM**, encouraging you to take back control of your mappings.
 - [Batch](#batches) model, to enable unit of work pattern
 - Asynchronous capabilities
 - Enhanced exception output
-- `IDataReader` extensions to facilitate mapping
+- `IDataReader` [extensions](#idatareader-extension-methods) to facilitate mapping
 
 ## Getting Started
 
@@ -147,6 +147,10 @@ batch.Commit();
 ```
 
 On commit batches will automatically take care of cleaning up all volatile resources (`IDbConnection`, `IDbTransaction`). So `Commit()` should be seen as a terminal command.
+
+## Exceptions
+
+_Docs comming soon_
 
 ## `IDataReader` Extension Methods
 
