@@ -10,15 +10,14 @@ At it's core is a batch model, which encourages performing database-related work
 Spiffy **is not an ORM**, encouraging you to take back control of your mappings. However, Spiffy does extend the `IDataReader` interface with several helpers covering most primitive types to make retrieving values safer and more direct.
 
 ## Key Features
-- Designed to support single- and multi-connection scenarios
 - [Batch](#batches) model, to enable unit of work pattern
-- Asynchronous capabilities
+- Safe value reading via `IDataReader` [extensions](#idatareader-extension-methods)
 - Enhanced exception output
-- `IDataReader` [extensions](#idatareader-extension-methods) to facilitate mapping
+- Asynchronous capabilities
 
 ## Getting Started
 
-Install the Donald NuGet package:
+Install the Spiffy NuGet package:
 
 ```
 PM>  Install-Package Spiffy
@@ -30,7 +29,46 @@ Or using the dotnet CLI
 dotnet add package Spiffy
 ```
 
+### Quick Start
+
+```csharp
+using System;
+using Microsoft.Data.SQLite;
+using Spiffy;
+
+namespace SpiffyQuickStart
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            using var connection = new SqliteConnection("Data Source=hello.db");
+
+            var sql = @"
+            SELECT  author_id
+                  , full_name 
+            FROM    author 
+            WHERE   author_id = @author_id";
+
+            var param = new DbParams("author_id", 1)
+            
+            connection.Query(sql, param, rd => {
+                Console.WriteLine("Hello {0}" rd.GetString("full_name"));
+            })
+        }
+    }
+}
+
+
+```
+
 ## An Example using SQLite
+
+For this example, assume we have an `IDbConnection` named `conn`:
+
+```csharp
+var connection = new SqliteConnection("Data Source=hello.db");
+```
 
 Consider the following domain model:
 
@@ -50,90 +88,63 @@ public class Author
 }
 ```
 
-### Define an `IDbConnectionFactory`
+### Query for multiple strongly-type results
 
 ```csharp
-public class AppDb : IDbConnectionFactory
-{
-    private readonly string _connectionString;
+var sql = "SELECT author_id, full_name FROM author";
+var authors = conn.Query(sql, Author.FromDataReader);
 
-    public AppDb(string connectionString) {
-        _connection = connectionString;
-    }
-
-    public IDbConnection NewConnection() => new SQLiteConnection(_connectionString);
-}    
 ```
 
-### Instantiate a `DbFixture`
-
-Normally this will be the responsbility of your IoC, but a demonstration of manual construction will outline the objective.
+### Query for a single strongly-type result
 
 ```csharp
-var connectionString = //...
-var connectionFactory = new AppDb(connectionString);
-var db = new DbFixture<TestDbConnectionFactory>();
+var sql = "SELECT author_id, full_name FROM author WHERE author_id = @author_id";
+var param = new DbParams("author_id", authorId)
+// This method is optimized to dispose the `IDataReader` after safely reading the first `IDataRecord
+var author = conn.QuerySingle(sql, param, Author.FromDataReader);
 ```
 
-### Create a provider/repository
+### Execute a statement multiple times
 
 ```csharp
-public class AuthorProvider {
-    private DbFixture<AppDb> _db;
+var sql = "INSERT INTO author (full_name)";
+var paramList = authors.Select(a => new DbParams("full_name", a.FullName));
+conn.ExecMany(sql, paramList);
+```
 
-    public AuthorProvider (IDbFixture<AppDb> db) {
-        _db = db;
-    }
+### Execute a statement transactionally
 
-    // Query for multiple strongly-type results
-    public IEnumerable<Author> GetAll() {
-        var sql = "SELECT author_id, full_name FROM author";
-        return _db.Query(sql, Author.FromDataReader);
-    }
-
-    // Query for a single strongly-type result
-    public Author Get(int authorId) {
-        var sql = "SELECT author_id, full_name FROM author WHERE author_id = @author_id";
-        var param = new DbParams("author_id", authorId)
-        return _db.QuerySingle(sql, param, Author.FromDataReader);
-        // This method is optimized to dispose the `IDataReader` after safely reading the first `IDataRecord
-    }    
-
-    // Execute a statement multiple times
-    public void InsertMany(IEnumerable<Author> authors) {
-        var sql = "INSERT INTO author (full_name)";
-        var paramList = authors.Select(a => new DbParams("full_name", a.FullName));
-        _db.ExecMany(sql, paramList);
-    }
-
-    // Execute a statement transactionally
-    public void Update(Author author) {
-        var batch = _db.BeginBatch();
-        var sql = "UPDATE author SET full_name = @full_name where author_id = @author_id";
-        var param = new DbParams() {
-            { "author_id", author.AuthorId },
-            { "full_name", author.FullName }
-        }
-        batch.Exec(sql, param);
-        batch.Commit();
-    }
-
-    // Asynchronously execute a scalar command
-    public async Task<int> Count() {        
-        var sql = "SELECT COUNT(*) FROM author";
-        var countObj = _db.ScalarAsync(sql);                
-        return Convert.ToInt32(countObj);
-    }
+```csharp
+var batch = conn.BeginBatch();
+var sql = "UPDATE author SET full_name = @full_name where author_id = @author_id";
+var param = new DbParams() {
+    { "author_id", author.AuthorId },
+    { "full_name", author.FullName }
 }
+batch.Exec(sql, param);
+batch.Commit();
 ```
+
+> The `IDbBatch` facilitates the unit-of-work programming model.
+
+### Asynchronously execute a scalar command (single value)
+
+```csharp
+var sql = "SELECT COUNT(*) FROM author";
+var countObj = _db.ScalarAsync(sql);                
+var count = Convert.ToInt32(countObj);
+```
+
+> Async versions of all data access methods are available: `ExecAsync, ExecManyAsync, ScalarAsync, QueryAsync, QuerySingleAsync, ReadAsync`
 
 ## Batches
 
 The heart and soul of Spiffy is the `IDbBatch`, which provides a simple API for implementing the unit of work pattern and are also ideal for situations which would benefit from reusing resources like, connection and transaction.
 
 ```csharp
-IDbConnection db = ... // connection creation code
-var batch = db.BeginBatch();
+IDbConnection conn = ... // connection creation code
+var batch = conn.BeginBatch();
 
 // ... work in the batch ...
 
@@ -147,10 +158,6 @@ batch.Commit();
 ```
 
 On commit batches will automatically take care of cleaning up all volatile resources (`IDbConnection`, `IDbTransaction`). So `Commit()` should be seen as a terminal command.
-
-## Exceptions
-
-_Docs comming soon_
 
 ## `IDataReader` Extension Methods
 
@@ -190,6 +197,10 @@ public static float? GetNullableFloat(this IDataReader rd, string field) = // ..
 public static Guid? GetNullableGuid(this IDataReader rd, string field) = // ...
 public static DateTime? GetNullableDateTime(this IDataReader rd, string field) = // ...
 ```
+
+## Errors
+
+_Docs comming soon_
 
 ## Why no automatic mapping?
 
