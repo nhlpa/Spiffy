@@ -64,7 +64,7 @@ namespace SpiffyQuickStart
 
 ## An Example using SQLite
 
-For this example, assume we have an `IDbConnection` named `conn`:
+For this example, assume we have an `IDbConnection` named `connection`:
 
 ```csharp
 var connection = new SqliteConnection("Data Source=hello.db");
@@ -92,7 +92,7 @@ public class Author
 
 ```csharp
 var sql = "SELECT author_id, full_name FROM author";
-var authors = conn.Query(sql, Author.FromDataReader);
+var authors = connection.Query(sql, Author.FromDataReader);
 
 ```
 
@@ -102,7 +102,7 @@ var authors = conn.Query(sql, Author.FromDataReader);
 var sql = "SELECT author_id, full_name FROM author WHERE author_id = @author_id";
 var param = new DbParams("author_id", authorId)
 // This method is optimized to dispose the `IDataReader` after safely reading the first `IDataRecord
-var author = conn.QuerySingle(sql, param, Author.FromDataReader);
+var author = connection.QuerySingle(sql, param, Author.FromDataReader);
 ```
 
 ### Execute a statement multiple times
@@ -110,13 +110,13 @@ var author = conn.QuerySingle(sql, param, Author.FromDataReader);
 ```csharp
 var sql = "INSERT INTO author (full_name)";
 var paramList = authors.Select(a => new DbParams("full_name", a.FullName));
-conn.ExecMany(sql, paramList);
+connection.ExecMany(sql, paramList);
 ```
 
 ### Execute a statement transactionally
 
 ```csharp
-var batch = conn.BeginBatch();
+var batch = connection.BeginBatch();
 var sql = "UPDATE author SET full_name = @full_name where author_id = @author_id";
 var param = new DbParams() {
     { "author_id", author.AuthorId },
@@ -144,7 +144,7 @@ The heart and soul of Spiffy is the `IDbBatch`, which provides a simple API for 
 
 ```csharp
 IDbConnection conn = ... // connection creation code
-var batch = conn.BeginBatch();
+var batch = connection.BeginBatch();
 
 // ... work in the batch ...
 
