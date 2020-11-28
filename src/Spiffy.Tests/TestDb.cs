@@ -11,31 +11,23 @@ namespace Spiffy.Tests
     {
     }
 
-    public class TestDb //: IDisposable
+    public class TestDb : IDisposable
     {
-        public readonly DbFixture<TestDbConnectionFactory> Db;
-
+        private const string _connectionString = "Data Source=.\\testdb.db;Version=3;New=true;";
+        
         public TestDb()
-        {
-            var connFact = new TestDbConnectionFactory();
-            var db = new DbFixture<TestDbConnectionFactory>(connFact);
-
+        {            
+            using var conn = NewConnection();
             using var fs = File.OpenRead("schema.sql");
             using var sr = new StreamReader(fs);
             var sql = sr.ReadToEnd();
-            db.Exec(sql);
-
-            Db = db;
+            conn.Exec(sql);
         }
+
+        public Func<IDbConnection> NewConnection => () => new SQLiteConnection(_connectionString);
 
         public string GenerateRandomString() => Path.GetRandomFileName().Replace(".", "");
 
-        //public void Dispose() => File.Delete("test.db");
-    }
-
-    public class TestDbConnectionFactory : IDbConnectionFactory
-    {
-        private const string _connectionString = "Data Source=.\\testdb.db;Version=3;New=true;";
-        public IDbConnection NewConnection() => new SQLiteConnection(_connectionString);
+        public void Dispose() => File.Delete("test.db");
     }
 }

@@ -5,21 +5,20 @@ using Xunit;
 namespace Spiffy.Tests
 {
     [Collection("TestDb")]
-    public class DbFixtureTests
+    public class IDbConnectionExtensionTests
     {
         private readonly TestDb _testDb;
-        private readonly DbFixture<TestDbConnectionFactory> _db;
-
-        public DbFixtureTests(TestDb testDb)
+        
+        public IDbConnectionExtensionTests(TestDb testDb)
         {
-            _testDb = testDb;
-            _db = testDb.Db;
+            _testDb = testDb;            
         }
 
         [Fact]
         public void CanCreateNewBatch()
         {
-            var batch = _db.NewBatch();
+            using var conn = _testDb.NewConnection();
+            var batch = conn.NewBatch();
             Assert.NotNull(batch);
             batch.Rollback();
         }
@@ -30,8 +29,9 @@ namespace Spiffy.Tests
             var descripton = _testDb.GenerateRandomString();
             var sql = "INSERT INTO test_values (description) VALUES (@description);";
             var param = new DbParams("description", descripton);
-
-            var rowsAffected = _db.Exec(sql, param);
+            
+            using var conn = _testDb.NewConnection();
+            var rowsAffected = conn.Exec(sql, param);
             Assert.Equal(1, rowsAffected);
         }
 
@@ -40,7 +40,8 @@ namespace Spiffy.Tests
             var expected = _testDb.GenerateRandomString();
             var sql = "SELECT @description";
             var param = new DbParams("description", expected);
-            var result = _db.Scalar(sql, param);
+            using var conn = _testDb.NewConnection();
+            var result = conn.Scalar(sql, param);
 
             Assert.Equal(expected, Convert.ToString(result) ?? "");
         }
@@ -50,7 +51,8 @@ namespace Spiffy.Tests
             var expected = _testDb.GenerateRandomString();
             var sql = "SELECT @description AS description";
             var param = new DbParams("description", expected);
-            var result = _db.Query(sql, param, rd => rd.GetString("description"));
+            using var conn = _testDb.NewConnection();
+            var result = conn.Query(sql, param, rd => rd.GetString("description"));
 
             Assert.Equal(expected, result.First());
         }
@@ -61,7 +63,8 @@ namespace Spiffy.Tests
             var expected = _testDb.GenerateRandomString();
             var sql = "SELECT @description AS description";
             var param = new DbParams("description", expected);
-            var result = _db.QuerySingle(sql, param, rd => rd.GetString("description"));
+            using var conn = _testDb.NewConnection();
+            var result = conn.QuerySingle(sql, param, rd => rd.GetString("description"));
 
             Assert.Equal(expected, result);
         }

@@ -9,12 +9,10 @@ namespace Spiffy.Tests
     public class DbBatchAsyncTests
     {
         private readonly TestDb _testDb;
-        private readonly DbFixture<TestDbConnectionFactory> _db;
-
+        
         public DbBatchAsyncTests(TestDb testDb)
         {
-            _testDb = testDb;
-            _db = testDb.Db;
+            _testDb = testDb;            
         }
 
         [Fact]
@@ -24,7 +22,8 @@ namespace Spiffy.Tests
             var sql = "INSERT INTO test_values (description) VALUES (@description);";
             var param = new DbParams("description", descripton);
 
-            var batch = _db.NewBatch();
+            using var conn = _testDb.NewConnection();
+            var batch = conn.NewBatch();
             var rowsAffected = await batch.ExecAsync(sql, param);
             batch.Commit();
             Assert.Equal(1, rowsAffected);
@@ -37,11 +36,12 @@ namespace Spiffy.Tests
             var sql = "INSERT INTO test_values (description) VALUES (@description);";
             var param = new DbParams("description", descripton);
 
-            var batch = _db.NewBatch();
+            using var conn = _testDb.NewConnection();
+            var batch = conn.NewBatch();
             var rowsAffected = batch.Exec(sql, param);
             batch.Rollback();
 
-            var exists = await _db.QuerySingleAsync(
+            var exists = await conn.QuerySingleAsync(
                 "SELECT description FROM test_values WHERE description = @description;",
                 param,
                 rd => rd.GetString("description"));
@@ -56,7 +56,8 @@ namespace Spiffy.Tests
             var sql = "SELECT @description";
             var param = new DbParams("description", expected);
 
-            var batch = _db.NewBatch();
+            using var conn = _testDb.NewConnection();
+            var batch = conn.NewBatch();
             var result = await batch.ScalarAsync(sql, param);
             batch.Commit();
 
@@ -70,7 +71,8 @@ namespace Spiffy.Tests
             var sql = "SELECT @description AS description";
             var param = new DbParams("description", expected);
 
-            var batch = _db.NewBatch();
+            using var conn = _testDb.NewConnection();
+            var batch = conn.NewBatch();
             var result = await batch.QueryAsync(sql, param, rd => rd.GetString("description"));
             batch.Commit();
 
@@ -84,7 +86,8 @@ namespace Spiffy.Tests
             var sql = "SELECT @description AS description";
             var param = new DbParams("description", expected);
 
-            var batch = _db.NewBatch();
+            using var conn = _testDb.NewConnection();
+            var batch = conn.NewBatch();
             var result = await batch.QuerySingleAsync(sql, param, rd => rd.GetString("description"));
             batch.Commit();
             Assert.Equal(expected, result);
@@ -156,7 +159,8 @@ namespace Spiffy.Tests
                 { "p_GetNullableDateTime", null }
             };
 
-            var result = await _db.QuerySingleAsync(sql, param, rd =>
+            using var conn = _testDb.NewConnection();
+            var result = await conn.QuerySingleAsync(sql, param, rd =>
             {
                 Assert.Equal("spiffy", rd.GetString("p_GetString"));
                 Assert.Equal('s', rd.GetChar("p_GetChar"));

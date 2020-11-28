@@ -40,15 +40,12 @@
   <ItemGroup>
     <Compile Include="DbBatch.cs" />
     <Compile Include="DbException.cs" />
-    <Compile Include="DbFixture.cs" />
     <Compile Include="DbParams.cs" />
     <Compile Include="Extensions\DbCommandAsyncExtensions.cs" />
     <Compile Include="Extensions\IDataReaderExtensions.cs" />
     <Compile Include="Extensions\IDbCommandExtensions.cs" />
     <Compile Include="Extensions\IDbConnectionExtensions.cs" />
     <Compile Include="IDbBatch.cs" />
-    <Compile Include="IDbConnectionFactory.cs" />
-    <Compile Include="IDbFixture.cs" />
     <Compile Include="IDbHandler.cs" />
     <Compile Include="IDbHandlerAsync.cs" />
   </ItemGroup>
