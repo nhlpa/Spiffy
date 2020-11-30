@@ -10,6 +10,7 @@ At it's core is a batch model, which encourages performing database-related work
 Spiffy **is not an ORM**, encouraging you to take back control of your mappings. However, Spiffy does extend the `IDataReader` interface with several helpers covering most primitive types to make retrieving values safer and more direct.
 
 ## Key Features
+
 - [Batch](#batches) model, to enable unit of work pattern.
 - Safe value reading via `IDataReader` [extensions](#idatareader-extension-methods).
 - Enhanced exception output.
@@ -42,7 +43,8 @@ namespace SpiffyQuickStart
     {
         static void Main(string[] args)
         {
-            using var connection = new SqliteConnection("Data Source=hello.db");
+            var connectionString = "{your connection string}";
+            using var connection = new SqliteConnection(connectionString);
 
             var sql = @"
             SELECT  author_id
@@ -93,7 +95,6 @@ public class Author
 ```csharp
 var sql = "SELECT author_id, full_name FROM author";
 var authors = connection.Query(sql, Author.FromDataReader);
-
 ```
 
 ### Query for a single strongly-type result
