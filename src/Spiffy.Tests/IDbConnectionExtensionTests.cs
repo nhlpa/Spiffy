@@ -52,7 +52,7 @@ namespace Spiffy.Tests
             var sql = "SELECT @description AS description";
             var param = new DbParams("description", expected);
             using var conn = _testDb.NewConnection();
-            var result = conn.Query(sql, param, rd => rd.GetString("description"));
+            var result = conn.Query(sql, param, rd => rd.ReadString("description"));
 
             Assert.Equal(expected, result.First());
         }
@@ -64,7 +64,7 @@ namespace Spiffy.Tests
             var sql = "SELECT @description AS description";
             var param = new DbParams("description", expected);
             using var conn = _testDb.NewConnection();
-            var result = conn.QuerySingle(sql, param, rd => rd.GetString("description"));
+            var result = conn.QuerySingle(sql, param, rd => rd.ReadString("description"));
 
             Assert.Equal(expected, result);
         }

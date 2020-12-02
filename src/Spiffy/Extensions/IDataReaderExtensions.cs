@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 
 namespace Spiffy
 {
@@ -9,136 +10,144 @@ namespace Spiffy
     public static class IDataReaderExtensions
     {
         /// <summary>
-        /// Get string from IDataReader
+        /// Read string from IDataReader
         /// </summary>
-        public static string GetString(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetString);
+        public static string ReadString(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetString);
 
         /// <summary>
-        /// Get char from IDataReader
+        /// Read char from IDataReader
         /// </summary>
-        public static char GetChar(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetChar);
+        public static char ReadChar(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetChar);
 
         /// <summary>
-        /// Get bool from IDataReader
+        /// Read bool from IDataReader
         /// </summary>
-        public static bool GetBoolean(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetBoolean);
+        public static bool ReadBoolean(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetBoolean);
 
         /// <summary>
-        /// Get byte from IDataReader
+        /// Read byte from IDataReader
         /// </summary>
-        public static byte GetByte(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetByte);
+        public static byte ReadByte(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetByte);
 
         /// <summary>
-        /// Get short from IDataReader
+        /// Read short from IDataReader
         /// </summary>
-        public static short GetInt16(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetInt16);
+        public static short ReadInt16(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetInt16);
 
         /// <summary>
-        /// Get short from IDataReader
+        /// Read short from IDataReader
         /// </summary>
-        public static short GetShort(this IDataReader rd, string field) => rd.GetInt16(field);
+        public static short ReadShort(this IDataReader rd, string field) => rd.ReadInt16(field);
 
         /// <summary>
-        /// Get int from IDataReader
+        /// Read int from IDataReader
         /// </summary>
-        public static int GetInt32(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetInt32);
+        public static int ReadInt32(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetInt32);
 
         /// <summary>
-        /// Get long from IDataReader
+        /// Read long from IDataReader
         /// </summary>
-        public static long GetInt64(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetInt64);
+        public static long ReadInt64(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetInt64);
 
         /// <summary>
-        /// Get long from IDataReader
+        /// Read long from IDataReader
         /// </summary>
-        public static long GetLong(this IDataReader rd, string field) => rd.GetInt64(field);
+        public static long ReadLong(this IDataReader rd, string field) => rd.ReadInt64(field);
 
         /// <summary>
-        /// Get decimal from IDataReader
+        /// Read decimal from IDataReader
         /// </summary>
-        public static decimal GetDecimal(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetDecimal);
+        public static decimal ReadDecimal(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetDecimal);
 
         /// <summary>
-        /// Get double from IDataReader
+        /// Read double from IDataReader
         /// </summary>
-        public static double GetDouble(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetDouble);
+        public static double ReadDouble(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetDouble);
 
         /// <summary>
-        /// Get float from IDataReader
+        /// Read float from IDataReader
         /// </summary>
-        public static float GetFloat(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetFloat);
+        public static float ReadFloat(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetFloat);
 
         /// <summary>
-        /// Get Guid from IDataReader
+        /// Read Guid from IDataReader
         /// </summary>
-        public static Guid GetGuid(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetGuid);
+        public static Guid ReadGuid(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetGuid);
 
         /// <summary>
-        /// Get DateTime from IDataReader
+        /// Read DateTime from IDataReader
         /// </summary>
-        public static DateTime GetDateTime(this IDataReader rd, string field) => rd.GetValueByField(field, rd.GetDateTime);
+        public static DateTime ReadDateTime(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetDateTime);
 
         /// <summary>
-        /// Get bool? from IDataReader
+        /// Read byte[] from IDataReader
         /// </summary>
-        public static bool? GetNullableBoolean(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetBoolean);
+        /// <param name="rd"></param>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public static byte[] ReadBytes(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.StreamBytes);
 
         /// <summary>
-        /// Get byte? from IDataReader
+        /// Read bool? from IDataReader
         /// </summary>
-        public static byte? GetNullableByte(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetByte);
+        public static bool? ReadNullableBoolean(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetBoolean);
 
         /// <summary>
-        /// Get short? from IDataReader
+        /// Read byte? from IDataReader
         /// </summary>
-        public static short? GetNullableInt16(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetInt16);
+        public static byte? ReadNullableByte(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetByte);
 
         /// <summary>
-        /// Get short? from IDataReader
+        /// Read short? from IDataReader
         /// </summary>
-        public static short? GetNullableShort(this IDataReader rd, string field) => rd.GetNullableInt16(field);
+        public static short? ReadNullableInt16(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetInt16);
 
         /// <summary>
-        /// Get int? from IDataReader
+        /// Read short? from IDataReader
         /// </summary>
-        public static int? GetNullableInt32(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetInt32);
+        public static short? ReadNullableShort(this IDataReader rd, string field) => rd.ReadNullableInt16(field);
 
         /// <summary>
-        /// Get long? from IDataReader
+        /// Read int? from IDataReader
         /// </summary>
-        public static long? GetNullableInt64(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetInt64);
+        public static int? ReadNullableInt32(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetInt32);
 
         /// <summary>
-        /// Get long? from IDataReader
+        /// Read long? from IDataReader
         /// </summary>
-        public static long? GetNullableLong(this IDataReader rd, string field) => rd.GetNullableInt64(field);
+        public static long? ReadNullableInt64(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetInt64);
 
         /// <summary>
-        /// Get decimal? from IDataReader
+        /// Read long? from IDataReader
         /// </summary>
-        public static decimal? GetNullableDecimal(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetDecimal);
+        public static long? ReadNullableLong(this IDataReader rd, string field) => rd.ReadNullableInt64(field);
 
         /// <summary>
-        /// Get double? from IDataReader
+        /// Read decimal? from IDataReader
         /// </summary>
-        public static double? GetNullableDouble(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetDouble);
+        public static decimal? ReadNullableDecimal(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetDecimal);
 
         /// <summary>
-        /// Get float? from IDataReader
+        /// Read double? from IDataReader
         /// </summary>
-        public static float? GetNullableFloat(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetFloat);
+        public static double? ReadNullableDouble(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetDouble);
 
         /// <summary>
-        /// Get Guid? from IDataReader
+        /// Read float? from IDataReader
         /// </summary>
-        public static Guid? GetNullableGuid(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetGuid);
+        public static float? ReadNullableFloat(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetFloat);
 
         /// <summary>
-        /// Get DateTime? from IDataReader
+        /// Read Guid? from IDataReader
         /// </summary>
-        public static DateTime? GetNullableDateTime(this IDataReader rd, string field) => rd.GetNullableValueByField(field, rd.GetDateTime);
+        public static Guid? ReadNullableGuid(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetGuid);
 
-        private static T GetValueByField<T>(this IDataReader rd, string fieldName, Func<int, T> map)
+        /// <summary>
+        /// Read DateTime? from IDataReader
+        /// </summary>
+        public static DateTime? ReadNullableDateTime(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetDateTime);
+
+        private static T ReadValueByField<T>(this IDataReader rd, string fieldName, Func<int, T> map)
         {
             var i = rd.GetOrdinal(fieldName);
 
@@ -150,7 +159,7 @@ namespace Spiffy
             return map(i);
         }
 
-        private static T? GetNullableValueByField<T>(this IDataReader rd, string fieldName, Func<int, T> map)
+        private static T? ReadNullableValueByField<T>(this IDataReader rd, string fieldName, Func<int, T> map)
             where T : struct
         {
             var i = rd.GetOrdinal(fieldName);
@@ -161,6 +170,32 @@ namespace Spiffy
             }
 
             return map(i);
+        }
+
+        private static byte[] StreamBytes(this IDataReader rd, int ordinal)
+        {
+            var bufferSize = 1024;
+            var buffer = new byte[bufferSize];
+            long bytesReturned;
+            int startIndex = 0;
+            using (var ms = new MemoryStream())
+            {
+                bytesReturned = rd.GetBytes(ordinal, startIndex, buffer, 0, bufferSize);
+                while (bytesReturned == bufferSize)
+                {
+                    ms.Write(buffer, 0, (int)bytesReturned);
+                    ms.Flush();
+
+                    startIndex += bufferSize;
+                    bytesReturned = rd.GetBytes(ordinal, startIndex, buffer, 0, bufferSize);
+                }
+
+                ms.Write(buffer, 0, (int)bytesReturned);
+                ms.Flush();
+
+                return ms.ToArray();
+            }
+
         }
     }
 }

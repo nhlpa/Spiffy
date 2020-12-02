@@ -43,7 +43,7 @@ namespace Spiffy.Tests
             var exists = conn.QuerySingle(
                 "SELECT description FROM test_values WHERE description = @description;",
                 param,
-                rd => rd.GetString("description"));
+                rd => rd.ReadString("description"));
 
             Assert.Null(exists);
         }
@@ -73,7 +73,7 @@ namespace Spiffy.Tests
             using var conn = _testDb.NewConnection();
             var batch = conn.NewBatch();
             
-            var result = batch.Query(sql, param, rd => rd.GetString("description"));
+            var result = batch.Query(sql, param, rd => rd.ReadString("description"));
             batch.Commit();
 
             Assert.Equal(expected, result.First());
@@ -88,7 +88,7 @@ namespace Spiffy.Tests
 
             using var conn = _testDb.NewConnection();
             var batch = conn.NewBatch();
-            var result = batch.QuerySingle(sql, param, rd => rd.GetString("description"));
+            var result = batch.QuerySingle(sql, param, rd => rd.ReadString("description"));
             batch.Commit();
             Assert.Equal(expected, result);
         }
@@ -109,6 +109,7 @@ namespace Spiffy.Tests
                   , @p_GetFloat AS p_GetFloat
                   , @p_GetGuid AS p_GetGuid
                   , @p_GetDateTime AS p_GetDateTime
+                  , @p_GetBytes AS p_GetBytes
                   , @p_GetNullableBoolean AS p_GetNullableBoolean
                   , @p_GetNullableByte AS p_GetNullableByte
                   , @p_GetNullableInt16 AS p_GetNullableInt16
@@ -119,6 +120,7 @@ namespace Spiffy.Tests
                   , @p_GetNullableFloat AS p_GetNullableFloat
                   , @p_GetNullableGuid AS p_GetNullableGuid
                   , @p_GetNullableDateTime AS p_GetNullableDateTime
+                  , @p_GetNullableBytes AS p_GetNullableBytes
                   , @p_GetString AS p_GetNullableString_value
                   , @p_GetChar AS p_GetNullableChar_value
                   , @p_GetBoolean AS p_GetNullableBoolean_value
@@ -131,11 +133,12 @@ namespace Spiffy.Tests
                   , @p_GetFloat AS p_GetNullableFloat_value
                   , @p_GetGuid AS p_GetNullableGuid_value
                   , @p_GetDateTime AS p_GetNullableDateTime_value
+                  , @p_GetBytes AS p_GetNullableBytes_value
             ";
 
             var now = DateTime.Now;
             var param = new DbParams(){
-                { "p_GetString", "spiffy" },
+                { "p_GetString", "Nhlpa.Sql" },
                 { "p_GetChar", 's' },
                 { "p_GetBoolean", true },
                 { "p_GetByte", 1 },
@@ -147,6 +150,7 @@ namespace Spiffy.Tests
                 { "p_GetFloat", 1.0 },
                 { "p_GetGuid", Guid.Empty },
                 { "p_GetDateTime", now },
+                { "p_GetBytes", new byte[]{ } },
                 { "p_GetNullableBoolean", null },
                 { "p_GetNullableByte", null },
                 { "p_GetNullableInt16", null },
@@ -156,45 +160,49 @@ namespace Spiffy.Tests
                 { "p_GetNullableDouble", null },
                 { "p_GetNullableFloat", null },
                 { "p_GetNullableGuid", null },
-                { "p_GetNullableDateTime", null }
+                { "p_GetNullableDateTime", null },
+                { "p_GetNullableBytes", null }
             };
 
             using var conn = _testDb.NewConnection();
             var result = conn.QuerySingle(sql, param, rd =>
             {
-                Assert.Equal("spiffy", rd.GetString("p_GetString"));
-                Assert.Equal('s', rd.GetChar("p_GetChar"));
-                Assert.True(rd.GetBoolean("p_GetBoolean"));
-                Assert.Equal(1, rd.GetByte("p_GetByte"));
-                Assert.Equal(1, rd.GetInt16("p_GetInt16"));
-                Assert.Equal(1, rd.GetInt32("p_GetInt32"));
-                Assert.Equal(1L, rd.GetInt64("p_GetInt64"));
-                Assert.Equal(1.0M, rd.GetDecimal("p_GetDecimal"));
-                Assert.Equal(1.0, rd.GetDouble("p_GetDouble"));
-                Assert.Equal(1.0, rd.GetFloat("p_GetFloat"));
-                Assert.Equal(Guid.Empty, rd.GetGuid("p_GetGuid"));
-                Assert.Equal(now, rd.GetDateTime("p_GetDateTime"));
-                
-                Assert.Null(rd.GetNullableBoolean("p_GetNullableBoolean"));
-                Assert.Null(rd.GetNullableByte("p_GetNullableByte"));
-                Assert.Null(rd.GetNullableInt16("p_GetNullableInt16"));
-                Assert.Null(rd.GetNullableInt32("p_GetNullableInt32"));
-                Assert.Null(rd.GetNullableInt64("p_GetNullableInt64"));
-                Assert.Null(rd.GetNullableDecimal("p_GetNullableDecimal"));
-                Assert.Null(rd.GetNullableDouble("p_GetNullableDouble"));
-                Assert.Null(rd.GetNullableFloat("p_GetNullableFloat"));
-                Assert.Null(rd.GetNullableGuid("p_GetNullableGuid"));
-                Assert.Null(rd.GetNullableDateTime("p_GetNullableDateTime"));  
-                
-                Assert.True(rd.GetNullableBoolean("p_GetNullableBoolean_value"));
-                Assert.Equal<byte?>(1, rd.GetNullableByte("p_GetNullableByte_value"));
-                Assert.Equal<short?>(1, rd.GetNullableInt16("p_GetNullableInt16_value"));
-                Assert.Equal(1, rd.GetNullableInt32("p_GetNullableInt32_value"));
-                Assert.Equal(1L, rd.GetNullableInt64("p_GetNullableInt64_value"));
-                Assert.Equal(1.0M, rd.GetNullableDecimal("p_GetNullableDecimal_value"));
-                Assert.Equal(1.0, rd.GetNullableDouble("p_GetNullableDouble_value"));                
-                Assert.Equal(Guid.Empty, rd.GetNullableGuid("p_GetNullableGuid_value"));
-                Assert.Equal(now, rd.GetNullableDateTime("p_GetNullableDateTime_value"));
+                Assert.Equal("Nhlpa.Sql", rd.ReadString("p_GetString"));
+                Assert.Equal('s', rd.ReadChar("p_GetChar"));
+                Assert.True(rd.ReadBoolean("p_GetBoolean"));
+                Assert.Equal(1, rd.ReadByte("p_GetByte"));
+                Assert.Equal(1, rd.ReadInt16("p_GetInt16"));
+                Assert.Equal(1, rd.ReadInt32("p_GetInt32"));
+                Assert.Equal(1L, rd.ReadInt64("p_GetInt64"));
+                Assert.Equal(1.0M, rd.ReadDecimal("p_GetDecimal"));
+                Assert.Equal(1.0, rd.ReadDouble("p_GetDouble"));
+                Assert.Equal(1.0, rd.ReadFloat("p_GetFloat"));
+                Assert.Equal(Guid.Empty, rd.ReadGuid("p_GetGuid"));
+                Assert.Equal(now, rd.ReadDateTime("p_GetDateTime"));
+                Assert.Equal(new byte[] { }, rd.ReadBytes("p_GetBytes"));
+
+                Assert.Null(rd.ReadNullableBoolean("p_GetNullableBoolean"));
+                Assert.Null(rd.ReadNullableByte("p_GetNullableByte"));
+                Assert.Null(rd.ReadNullableInt16("p_GetNullableInt16"));
+                Assert.Null(rd.ReadNullableInt32("p_GetNullableInt32"));
+                Assert.Null(rd.ReadNullableInt64("p_GetNullableInt64"));
+                Assert.Null(rd.ReadNullableDecimal("p_GetNullableDecimal"));
+                Assert.Null(rd.ReadNullableDouble("p_GetNullableDouble"));
+                Assert.Null(rd.ReadNullableFloat("p_GetNullableFloat"));
+                Assert.Null(rd.ReadNullableGuid("p_GetNullableGuid"));
+                Assert.Null(rd.ReadNullableDateTime("p_GetNullableDateTime"));
+                Assert.Null(rd.ReadBytes("p_GetNullableBytes"));
+
+                Assert.True(rd.ReadNullableBoolean("p_GetNullableBoolean_value"));
+                Assert.Equal<byte?>(1, rd.ReadNullableByte("p_GetNullableByte_value"));
+                Assert.Equal<short?>(1, rd.ReadNullableInt16("p_GetNullableInt16_value"));
+                Assert.Equal(1, rd.ReadNullableInt32("p_GetNullableInt32_value"));
+                Assert.Equal(1L, rd.ReadNullableInt64("p_GetNullableInt64_value"));
+                Assert.Equal(1.0M, rd.ReadNullableDecimal("p_GetNullableDecimal_value"));
+                Assert.Equal(1.0, rd.ReadNullableDouble("p_GetNullableDouble_value"));
+                Assert.Equal(Guid.Empty, rd.ReadNullableGuid("p_GetNullableGuid_value"));
+                Assert.Equal(now, rd.ReadNullableDateTime("p_GetNullableDateTime_value"));
+                Assert.Equal(new byte[] { }, rd.ReadBytes("p_GetNullableBytes_value"));
 
                 return 1;
             });
