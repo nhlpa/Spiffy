@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <Compile Include="DbBatch.cs" />
+    <Compile Include="DbCommandBuilder.cs" />
     <Compile Include="DbException.cs" />
     <Compile Include="DbParams.cs" />
     <Compile Include="Extensions\DbCommandAsyncExtensions.cs" />
