@@ -38,17 +38,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DbBatch.cs" />
     <Compile Include="DbCommandBuilder.cs" />
+    <Compile Include="IDbCommandExtensions.cs" />
     <Compile Include="DbException.cs" />
     <Compile Include="DbParams.cs" />
-    <Compile Include="Extensions\DbCommandAsyncExtensions.cs" />
-    <Compile Include="Extensions\IDataReaderExtensions.cs" />
-    <Compile Include="Extensions\IDbCommandExtensions.cs" />
-    <Compile Include="Extensions\IDbConnectionExtensions.cs" />
-    <Compile Include="IDbBatch.cs" />
-    <Compile Include="IDbHandler.cs" />
-    <Compile Include="IDbHandlerAsync.cs" />
+    <Compile Include="DbCommandExtensions.cs" />
+    <Compile Include="IDataReaderExtensions.cs" />
+    <Compile Include="IDbConnectionExtensions.cs" />
+    <Compile Include="IDbTransactionExtensions.cs" />
   </ItemGroup>
 
 </Project>

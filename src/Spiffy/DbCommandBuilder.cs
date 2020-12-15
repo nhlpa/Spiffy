@@ -2,7 +2,7 @@
 using System.Data;
 
 namespace Spiffy
-{    
+{
     /// <summary>
     /// A fluent API for generating IDbCommand instances
     /// </summary>
@@ -11,18 +11,51 @@ namespace Spiffy
         private readonly IDbConnection _conn;
         private string _commandText;
         private int? _commandTimeout;
-        private CommandType _commandType;        
+        private CommandType _commandType;
         private DbParams _dbParams;
         private IDbTransaction _transaction;
 
         /// <summary>
-        /// 
+        /// Create an empty DbCommandBuilder
         /// </summary>
         /// <param name="conn"></param>
         public DbCommandBuilder(IDbConnection conn)
         {
             _conn = conn ?? throw new ArgumentNullException(nameof(conn));
-            _commandType = CommandType.Text;
+            _commandType = System.Data.CommandType.Text;
+        }
+
+        /// <summary>
+        /// Create an initialized DbCommandBuilder
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="commandText"></param>
+        /// <param name="param"></param>
+        public DbCommandBuilder(IDbConnection conn, string commandText, DbParams param = null) : this(conn)
+        {
+            CommandText(commandText);
+            DbParams(param);
+        }
+
+        /// <summary>
+        /// Create an empty DbCommandBuilder from IDbTransaction
+        /// </summary>
+        /// <param name="tran"></param>        
+        public DbCommandBuilder(IDbTransaction tran) : this(tran.Connection)
+        {
+            Transaction(tran);
+        }
+
+        /// <summary>
+        /// Create an initialized DbCommandBuilder
+        /// </summary>
+        /// <param name="tran"></param>
+        /// <param name="commandText"></param>
+        /// <param name="param"></param>
+        public DbCommandBuilder(IDbTransaction tran, string commandText, DbParams param = null) : this(tran)
+        {
+            CommandText(commandText);
+            DbParams(param);
         }
 
         /// <summary>
@@ -39,11 +72,11 @@ namespace Spiffy
                 command.CommandTimeout = _commandTimeout.Value;
 
             if (_dbParams != null)
-                command.AddDbParams(_dbParams);
+                command.SetDbParams(_dbParams);
 
             if (_transaction != null)
                 command.Transaction = _transaction;
-            
+
             return command;
         }
 
@@ -52,7 +85,7 @@ namespace Spiffy
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public DbCommandBuilder SetCommandText(string query)
+        public DbCommandBuilder CommandText(string query)
         {
             _commandText = query;
             return this;
@@ -63,7 +96,7 @@ namespace Spiffy
         /// </summary>
         /// <param name="commandType"></param>
         /// <returns></returns>
-        public DbCommandBuilder SetCommandType(CommandType commandType)
+        public DbCommandBuilder CommandType(CommandType commandType)
         {
             _commandType = commandType;
             return this;
@@ -74,7 +107,7 @@ namespace Spiffy
         /// </summary>
         /// <param name="commandTimeout"></param>
         /// <returns></returns>
-        public DbCommandBuilder SetCommandTimeout(int commandTimeout)
+        public DbCommandBuilder Timeout(int commandTimeout)
         {
             _commandTimeout = commandTimeout;
             return this;
@@ -85,9 +118,9 @@ namespace Spiffy
         /// </summary>
         /// <param name="dbParams"></param>
         /// <returns></returns>
-        public DbCommandBuilder AddDbParams(DbParams dbParams)
+        public DbCommandBuilder DbParams(DbParams dbParams)
         {
-            _dbParams = dbParams;
+            _dbParams = dbParams ?? new DbParams();
             return this;
         }
 
@@ -96,7 +129,7 @@ namespace Spiffy
         /// </summary>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        public DbCommandBuilder UsingTransaction(IDbTransaction transaction)
+        public DbCommandBuilder Transaction(IDbTransaction transaction)
         {
             _transaction = transaction;
             return this;
