@@ -3,7 +3,7 @@
 [![NuGet Version](https://img.shields.io/nuget/v/Spiffy.svg)](https://www.nuget.org/packages/Spiffy)
 [![Build Status](https://travis-ci.org/pimbrouwers/Spiffy.svg?branch=master)](https://travis-ci.org/pimbrouwers/Spiffy)
 
-Spiffy is a well-tested library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) from C# *a lot* simpler. 
+Spiffy is a well-tested library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) from C# *a lot* simpler.
 
 The library is delivered as a fluent API for building `IDbCommand` instances, and `IDbCommand` extension methods to support execution. Spiffy **is not an ORM**, encouraging you to take back control of your mappings. However, Spiffy does extend the `IDataReader` interface with several helpers covering most primitive types to make retrieving values safer and more direct.
 
@@ -14,6 +14,13 @@ The library is delivered as a fluent API for building `IDbCommand` instances, an
 - Safe value reading via `IDataReader` [extensions](#idatareader-extension-methods).
 - [Enhanced](#exceptions) exception output.
 - Asynchronous capabilities.
+
+## Design Goals
+
+- Appear "native", augmenting the base ADO.NET functionality as little as possible and adhering to internal naming conventions.
+- Encourage manual mappings by providing a succinct and safe methodology to obtain values from tabular data.
+- Provide an easy to reason about execution model.
+- Support asynchronous database workloads.
 
 ## Getting Started
 
