@@ -45,7 +45,12 @@ namespace Spiffy
         /// <summary>
         /// Could Not Execute Reader
         /// </summary>
-        CouldNotExecuteReader = 4002
+        CouldNotExecuteReader = 4002,
+
+        /// <summary>
+        /// Could Not Cast Value
+        /// </summary>
+        CouldNotCastValue = 5000,
     }
 
     /// <summary>

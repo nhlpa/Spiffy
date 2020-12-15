@@ -156,11 +156,17 @@ namespace Spiffy
                 return default;
             }
 
-            return map(i);
+            try
+            {
+                return map(i);
+            }
+            catch (InvalidCastException ex)
+            {
+                throw new FailedExecutionException(DbErrorCode.CouldNotCastValue, fieldName, ex);
+            }
         }
 
-        private static T? ReadNullableValueByField<T>(this IDataReader rd, string fieldName, Func<int, T> map)
-            where T : struct
+        private static T? ReadNullableValueByField<T>(this IDataReader rd, string fieldName, Func<int, T> map) where T : struct
         {
             var i = rd.GetOrdinal(fieldName);
 
@@ -169,7 +175,14 @@ namespace Spiffy
                 return null;
             }
 
-            return map(i);
+            try
+            {
+                return map(i);
+            }
+            catch (InvalidCastException ex)
+            {
+                throw new FailedExecutionException(DbErrorCode.CouldNotCastValue, fieldName, ex);
+            }
         }
 
         private static byte[] StreamBytes(this IDataReader rd, int ordinal)
