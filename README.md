@@ -5,7 +5,7 @@
 
 Spiffy is a well-tested library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) from C# *a lot* simpler. 
 
-The library is delivered as a fluent API for building IDbCommand instances, which is executed using one convenient `IDbCommand` extension methods. Spiffy **is not an ORM**, encouraging you to take back control of your mappings. However, Spiffy does extend the `IDataReader` interface with several helpers covering most primitive types to make retrieving values safer and more direct.
+The library is delivered as a fluent API for building `IDbCommand` instances, and `IDbCommand` extension methods to support execution. Spiffy **is not an ORM**, encouraging you to take back control of your mappings. However, Spiffy does extend the `IDataReader` interface with several helpers covering most primitive types to make retrieving values safer and more direct.
 
 ## Key Features
 
