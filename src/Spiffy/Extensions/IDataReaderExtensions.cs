@@ -190,7 +190,8 @@ namespace Spiffy
             var bufferSize = 1024;
             var buffer = new byte[bufferSize];
             long bytesReturned;
-            int startIndex = 0;
+            var startIndex = 0;
+
             using (var ms = new MemoryStream())
             {
                 bytesReturned = rd.GetBytes(ordinal, startIndex, buffer, 0, bufferSize);

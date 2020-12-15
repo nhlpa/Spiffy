@@ -78,7 +78,7 @@ namespace Spiffy
         /// <returns></returns>
         public void ExecMany(string sql, IEnumerable<DbParams> paramList) =>
             DoMany(sql, paramList, cmd => cmd.Exec());
-       
+
         /// <summary>
         /// Execute parameterized query and return single-value.
         /// </summary>        
@@ -231,8 +231,15 @@ namespace Spiffy
         {
             try
             {
-                var cmd = _connection.NewCommand(_transaction, sql, param);
-                return func(cmd);
+                var cmdBuilder = new DbCommandBuilder(_connection)
+                    .UsingTransaction(_transaction)
+                    .SetCommandText(sql)
+                    .AddDbParams(param);
+
+                using (var cmd = cmdBuilder.Build())
+                {
+                    return func(cmd);
+                }
             }
             catch (FailedExecutionException)
             {
@@ -245,8 +252,11 @@ namespace Spiffy
         {
             try
             {
-                var cmd = _connection.NewCommand(_transaction, sql, param) as DbCommand;
-                return await func(cmd);
+                var cmdBuilder = new DbCommandBuilder(_connection).SetCommandText(sql).AddDbParams(param);
+                using (var cmd = cmdBuilder.Build() as DbCommand)
+                {
+                    return await func(cmd);
+                }
             }
             catch (FailedExecutionException)
             {
@@ -259,13 +269,16 @@ namespace Spiffy
         {
             try
             {
-                var cmd = _connection.NewCommand(_transaction, sql);
+                var cmdBuilder = new DbCommandBuilder(_connection).UsingTransaction(_transaction).SetCommandText(sql);
 
-                foreach (var param in paramList)
+                using (var cmd = cmdBuilder.Build())
                 {
-                    cmd.Parameters.Clear();
-                    cmd.AddDbParams(param);
-                    func(cmd);
+                    foreach (var param in paramList)
+                    {
+                        cmd.Parameters.Clear();
+                        cmd.AddDbParams(param);
+                        func(cmd);
+                    }
                 }
             }
             catch (FailedExecutionException)
@@ -279,13 +292,16 @@ namespace Spiffy
         {
             try
             {
-                var cmd = _connection.NewCommand(_transaction, sql) as DbCommand;
-
-                foreach (var param in paramList)
+                var cmdBuilder = new DbCommandBuilder(_connection).UsingTransaction(_transaction).SetCommandText(sql);
+                
+                using (var cmd = cmdBuilder.Build() as DbCommand)
                 {
-                    cmd.Parameters.Clear();
-                    cmd.AddDbParams(param);
-                    await func(cmd);
+                    foreach (var param in paramList)
+                    {
+                        cmd.Parameters.Clear();
+                        cmd.AddDbParams(param);
+                        await func(cmd);
+                    }
                 }
             }
             catch (FailedExecutionException)

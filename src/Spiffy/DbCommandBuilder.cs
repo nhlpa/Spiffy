@@ -2,18 +2,11 @@
 using System.Data;
 
 namespace Spiffy
-{
-    public interface IDbCommandBuilder
-    {
-        IDbCommand Build();
-        IDbCommandBuilder SetCommandText(string query);        
-        IDbCommandBuilder SetCommandType(CommandType commandType);
-        IDbCommandBuilder SetCommandTimeout(int commandTimeout);        
-        IDbCommandBuilder AddDbParams(DbParams dbParams);
-        IDbCommandBuilder UsingTransaction(IDbTransaction transaction);
-    }
-
-    public class DbCommandBuilder : IDbCommandBuilder
+{    
+    /// <summary>
+    /// A fluent API for generating IDbCommand instances
+    /// </summary>
+    public class DbCommandBuilder
     {
         private readonly IDbConnection _conn;
         private string _commandText;
@@ -22,12 +15,20 @@ namespace Spiffy
         private DbParams _dbParams;
         private IDbTransaction _transaction;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conn"></param>
         public DbCommandBuilder(IDbConnection conn)
         {
             _conn = conn ?? throw new ArgumentNullException(nameof(conn));
             _commandType = CommandType.Text;
         }
 
+        /// <summary>
+        /// Generate IDbCommand
+        /// </summary>
+        /// <returns></returns>
         public IDbCommand Build()
         {
             var command = _conn.CreateCommand();
@@ -46,31 +47,56 @@ namespace Spiffy
             return command;
         }
 
-        public IDbCommandBuilder SetCommandText(string query)
+        /// <summary>
+        /// Set statement text
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public DbCommandBuilder SetCommandText(string query)
         {
             _commandText = query;
             return this;
         }
 
-        public IDbCommandBuilder SetCommandType(CommandType commandType)
+        /// <summary>
+        /// Set command type (default: CommandType.Text)
+        /// </summary>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
+        public DbCommandBuilder SetCommandType(CommandType commandType)
         {
             _commandType = commandType;
             return this;
         }
 
-        public IDbCommandBuilder SetCommandTimeout(int commandTimeout)
+        /// <summary>
+        /// Set command timeout
+        /// </summary>
+        /// <param name="commandTimeout"></param>
+        /// <returns></returns>
+        public DbCommandBuilder SetCommandTimeout(int commandTimeout)
         {
             _commandTimeout = commandTimeout;
             return this;
         }
 
-        public IDbCommandBuilder AddDbParams(DbParams dbParams)
+        /// <summary>
+        /// Add DbParams
+        /// </summary>
+        /// <param name="dbParams"></param>
+        /// <returns></returns>
+        public DbCommandBuilder AddDbParams(DbParams dbParams)
         {
             _dbParams = dbParams;
             return this;
         }
 
-        public IDbCommandBuilder UsingTransaction(IDbTransaction transaction)
+        /// <summary>
+        /// Set transaction
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        public DbCommandBuilder UsingTransaction(IDbTransaction transaction)
         {
             _transaction = transaction;
             return this;
