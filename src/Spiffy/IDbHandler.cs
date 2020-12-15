@@ -16,7 +16,7 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        int Exec(string sql, DbParams param = null);
+        void Exec(string sql, DbParams param = null);
 
         /// <summary>
         /// Execute parameterized query multiple times
@@ -25,14 +25,6 @@ namespace Spiffy
         /// <param name="paramList"></param>
         /// <returns></returns>
         void ExecMany(string sql, IEnumerable<DbParams> paramList);
-
-        /// <summary>
-        /// Execute parameterized query and return single-value.
-        /// </summary>        
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        object Scalar(string sql, DbParams param = null);
 
         /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.

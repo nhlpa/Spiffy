@@ -31,19 +31,14 @@ namespace Spiffy.Tests
             var param = new DbParams("description", descripton);
             
             using var conn = _testDb.NewConnection();
-            var rowsAffected = conn.Exec(sql, param);
-            Assert.Equal(1, rowsAffected);
-        }
+            conn.Exec(sql, param);
 
-        [Fact]
-        public void CanScalar() {
-            var expected = _testDb.GenerateRandomString();
-            var sql = "SELECT @description";
-            var param = new DbParams("description", expected);
-            using var conn = _testDb.NewConnection();
-            var result = conn.Scalar(sql, param);
-
-            Assert.Equal(expected, Convert.ToString(result) ?? "");
+            var exists = conn.QuerySingleAsync(
+                "SELECT description FROM test_values WHERE description = @description;",
+                param,
+                rd => rd.ReadString("description"));
+            
+            Assert.NotNull(exists);
         }
 
         [Fact]

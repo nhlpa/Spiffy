@@ -67,8 +67,8 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public int Exec(string sql, DbParams param = null) =>
-            Do(sql, param, cmd => cmd.Exec());
+        public void Exec(string sql, DbParams param = null) =>
+            DoVoid(sql, param, cmd => cmd.Exec());
 
         /// <summary>
         /// Execute parameterized query and return rows affected.
@@ -78,15 +78,6 @@ namespace Spiffy
         /// <returns></returns>
         public void ExecMany(string sql, IEnumerable<DbParams> paramList) =>
             DoMany(sql, paramList, cmd => cmd.Exec());
-
-        /// <summary>
-        /// Execute parameterized query and return single-value.
-        /// </summary>        
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public object Scalar(string sql, DbParams param = null) =>
-            Do(sql, param, cmd => cmd.Scalar());
 
         /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
@@ -145,8 +136,8 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public Task<int> ExecAsync(string sql, DbParams param = null) =>
-            DoAsync(sql, param, cmd => cmd.ExecAsync());
+        public Task ExecAsync(string sql, DbParams param = null) =>
+            DoVoidAsync(sql, param, cmd => cmd.ExecAsync());
 
         /// <summary>
         /// Execute parameterized query and return rows affected.
@@ -156,16 +147,6 @@ namespace Spiffy
         /// <returns></returns>
         public Task ExecManyAsync(string sql, IEnumerable<DbParams> paramList) =>
             DoManyAsync(sql, paramList, cmd => cmd.ExecAsync());
-
-
-        /// <summary>
-        /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>        
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public Task<object> ScalarAsync(string sql, DbParams param = null) =>
-            DoAsync(sql, param, cmd => cmd.ScalarAsync());
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
@@ -265,6 +246,44 @@ namespace Spiffy
             }
         }
 
+        private void DoVoid(string sql, DbParams param, Action<IDbCommand> func)
+        {
+            try
+            {
+                var cmdBuilder = new DbCommandBuilder(_connection)
+                    .UsingTransaction(_transaction)
+                    .SetCommandText(sql)
+                    .AddDbParams(param);
+
+                using (var cmd = cmdBuilder.Build())
+                {
+                    func(cmd);
+                }
+            }
+            catch (FailedExecutionException)
+            {
+                Rollback();
+                throw;
+            }
+        }
+
+        private async Task DoVoidAsync(string sql, DbParams param, Func<DbCommand, Task> func)
+        {
+            try
+            {
+                var cmdBuilder = new DbCommandBuilder(_connection).SetCommandText(sql).AddDbParams(param);
+                using (var cmd = cmdBuilder.Build() as DbCommand)
+                {
+                    await func(cmd);
+                }
+            }
+            catch (FailedExecutionException)
+            {
+                Rollback();
+                throw;
+            }
+        }
+
         private void DoMany(string sql, IEnumerable<DbParams> paramList, Action<IDbCommand> func)
         {
             try
@@ -293,7 +312,7 @@ namespace Spiffy
             try
             {
                 var cmdBuilder = new DbCommandBuilder(_connection).UsingTransaction(_transaction).SetCommandText(sql);
-                
+
                 using (var cmd = cmdBuilder.Build() as DbCommand)
                 {
                     foreach (var param in paramList)

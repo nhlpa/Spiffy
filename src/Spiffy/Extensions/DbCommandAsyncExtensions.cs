@@ -14,11 +14,11 @@ namespace Spiffy
         /// </summary>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        internal async static Task<int> ExecAsync(this DbCommand cmd)
+        internal async static Task ExecAsync(this DbCommand cmd)
         {
             try
             {
-                return await cmd.ExecuteNonQueryAsync();
+                await cmd.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
             {
@@ -75,23 +75,6 @@ namespace Spiffy
         /// </summary>
         internal async static Task<IDataReader> ReadAsync(this DbCommand cmd) =>
           await cmd.TryExecuteReaderAsync();
-
-        /// <summary>
-        /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>        
-        /// <param name="cmd"></param>
-        /// <returns></returns>
-        internal async static Task<object> ScalarAsync(this DbCommand cmd)
-        {
-            try
-            {
-                return await cmd.ExecuteScalarAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new FailedExecutionException(DbErrorCode.CouldNotExecuteScalar, cmd.CommandText, ex);
-            }
-        }
 
         private async static Task<IDataReader> TryExecuteReaderAsync(this DbCommand cmd)
         {

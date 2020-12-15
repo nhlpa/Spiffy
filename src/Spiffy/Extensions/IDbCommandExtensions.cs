@@ -22,11 +22,11 @@ namespace Spiffy
         /// </summary>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        internal static int Exec(this IDbCommand cmd)
+        internal static void Exec(this IDbCommand cmd)
         {
             try
             {
-                return cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
@@ -83,23 +83,6 @@ namespace Spiffy
         /// </summary>
         internal static IDataReader Read(this IDbCommand cmd) =>
           cmd.TryExecuteReader();
-
-        /// <summary>
-        /// Execute parameterized query and return single-value.
-        /// </summary>        
-        /// <param name="cmd"></param>
-        /// <returns></returns>
-        internal static object Scalar(this IDbCommand cmd)
-        {
-            try
-            {
-                return cmd.ExecuteScalar();
-            }
-            catch (Exception ex)
-            {
-                throw new FailedExecutionException(DbErrorCode.CouldNotExecuteScalar, cmd.CommandText, ex);
-            }
-        }
 
         private static IDataReader TryExecuteReader(this IDbCommand cmd)
         {

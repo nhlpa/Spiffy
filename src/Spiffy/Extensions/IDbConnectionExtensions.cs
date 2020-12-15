@@ -28,8 +28,8 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public static int Exec(this IDbConnection conn, string sql, DbParams param = null) =>
-            conn.Batch(b => b.Exec(sql, param));
+        public static void Exec(this IDbConnection conn, string sql, DbParams param = null) =>
+            conn.Do(b => b.Exec(sql, param));
 
         /// <summary>
         /// Execute parameterized query multiple times
@@ -40,16 +40,6 @@ namespace Spiffy
         /// <returns></returns>
         public static void ExecMany(this IDbConnection conn, string sql, IEnumerable<DbParams> param) =>
             conn.Do(b => b.ExecMany(sql, param));
-
-        /// <summary>
-        /// Execute parameterized query and return single-value.
-        /// </summary>        
-        /// <param name="conn"></param>
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public static object Scalar(this IDbConnection conn, string sql, DbParams param = null) =>
-            conn.Batch(b => b.Scalar(sql, param));
 
         /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
@@ -104,8 +94,8 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public static Task<int> ExecAsync(this IDbConnection conn, string sql, DbParams param = null) =>
-            conn.BatchAsync(b => b.ExecAsync(sql, param));
+        public static Task ExecAsync(this IDbConnection conn, string sql, DbParams param = null) =>
+            conn.DoAsync(b => b.ExecAsync(sql, param));
 
         /// <summary>
         /// Asynchronously execute parameterized query and return rows affected.
@@ -116,16 +106,6 @@ namespace Spiffy
         /// <returns></returns>
         public static Task ExecManyAsync(this IDbConnection conn, string sql, IEnumerable<DbParams> paramList) =>
             conn.DoAsync(b => b.ExecManyAsync(sql, paramList));
-
-        /// <summary>
-        /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>        
-        /// <param name="conn"></param>
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public static Task<object> ScalarAsync(this IDbConnection conn, string sql, DbParams param = null) =>
-            conn.BatchAsync(b => b.ScalarAsync(sql, param));
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.

@@ -16,7 +16,7 @@ namespace Spiffy
         /// <param name="sql"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<int> ExecAsync(string sql, DbParams param = null);
+        Task ExecAsync(string sql, DbParams param = null);
 
         /// <summary>
         /// Asynchronously execute parameterized query multiple times
@@ -25,14 +25,6 @@ namespace Spiffy
         /// <param name="paramList"></param>
         /// <returns></returns>
         Task ExecManyAsync(string sql, IEnumerable<DbParams> paramList);
-
-        /// <summary>
-        /// Asynchronously execute parameterized query and return single-value.
-        /// </summary>              
-        /// <param name="sql"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task<object> ScalarAsync(string sql, DbParams param = null);
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.

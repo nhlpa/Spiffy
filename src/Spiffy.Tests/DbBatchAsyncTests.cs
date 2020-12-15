@@ -24,9 +24,14 @@ namespace Spiffy.Tests
 
             using var conn = _testDb.NewConnection();
             var batch = conn.NewBatch();
-            var rowsAffected = await batch.ExecAsync(sql, param);
+            await batch.ExecAsync(sql, param);
+            var exists = await batch.QuerySingleAsync(
+                "SELECT description FROM test_values WHERE description = @description;",
+                param,
+                rd => rd.ReadString("description"));
             batch.Commit();
-            Assert.Equal(1, rowsAffected);
+
+            Assert.NotNull(exists);
         }
 
         [Fact]
@@ -38,7 +43,7 @@ namespace Spiffy.Tests
 
             using var conn = _testDb.NewConnection();
             var batch = conn.NewBatch();
-            var rowsAffected = batch.Exec(sql, param);
+            batch.Exec(sql, param);
             batch.Rollback();
 
             var exists = await conn.QuerySingleAsync(
@@ -47,21 +52,6 @@ namespace Spiffy.Tests
                 rd => rd.ReadString("description"));
 
             Assert.Null(exists);
-        }
-
-        [Fact]
-        public async Task CanScalarAsync()
-        {
-            var expected = _testDb.GenerateRandomString();
-            var sql = "SELECT @description";
-            var param = new DbParams("description", expected);
-
-            using var conn = _testDb.NewConnection();
-            var batch = conn.NewBatch();
-            var result = await batch.ScalarAsync(sql, param);
-            batch.Commit();
-
-            Assert.Equal(expected, Convert.ToString(result) ?? "");
         }
 
         [Fact]
