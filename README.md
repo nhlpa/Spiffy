@@ -194,7 +194,7 @@ public static Guid? ReadNullableGuid(this IDataReader rd, string field);
 public static DateTime? ReadNullableDateTime(this IDataReader rd, string field);
 ```
 
-## Errors
+## Exceptions
 
 _Docs comming soon_
 
