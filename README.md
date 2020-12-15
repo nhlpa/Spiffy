@@ -3,17 +3,16 @@
 [![NuGet Version](https://img.shields.io/nuget/v/Spiffy.svg)](https://www.nuget.org/packages/Spiffy)
 [![Build Status](https://travis-ci.org/pimbrouwers/Spiffy.svg?branch=master)](https://travis-ci.org/pimbrouwers/Spiffy)
 
-Spiffy is a well-tested library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) a lot simpler. 
+Spiffy is a well-tested library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) from C# *a lot* simpler. 
 
-It extends `IDbTransaction` to provide a basic "batch" model, which encourages performing database-related work in **units**. It also extends your `IDbConnection` interface to enable a simple API for performing queries that will be automatically batched for you.
-
-Spiffy **is not an ORM**, encouraging you to take back control of your mappings. However, Spiffy does extend the `IDataReader` interface with several helpers covering most primitive types to make retrieving values safer and more direct.
+The library is delivered as a fluent API for building IDbCommand instances, which is executed using one convenient `IDbCommand` extension methods. Spiffy **is not an ORM**, encouraging you to take back control of your mappings. However, Spiffy does extend the `IDataReader` interface with several helpers covering most primitive types to make retrieving values safer and more direct.
 
 ## Key Features
 
-- [Batch](#batches) model, to enable unit of work pattern.
+- Fluent API for build `IDbCommand` instances.
+- Simple execution model, delivered as `IDbCommand` extension methods.
 - Safe value reading via `IDataReader` [extensions](#idatareader-extension-methods).
-- Enhanced exception output.
+- [Enhanced](#exceptions) exception output.
 - Asynchronous capabilities.
 
 ## Getting Started
@@ -46,9 +45,11 @@ namespace SpiffyQuickStart
     static void Main(string[] args)
     {            
       var sql = "SELECT author_id, full_name FROM author WHERE author_id = @author_id";
+      
       var param = new DbParams("author_id", 1);
 
       using var connection = new SqliteConnection(connectionString);            
+      
       using var cmd = new DbCommandBuilder(connection, sql, param).Build();
             
       cmd.Query(cmd, rd => 
