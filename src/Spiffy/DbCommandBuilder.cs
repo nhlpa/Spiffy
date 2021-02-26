@@ -67,7 +67,7 @@ namespace Spiffy
             var command = _conn.CreateCommand();
             command.CommandType = _commandType;
             command.CommandText = _commandText;
-
+            
             if (_commandTimeout.HasValue)
                 command.CommandTimeout = _commandTimeout.Value;
 

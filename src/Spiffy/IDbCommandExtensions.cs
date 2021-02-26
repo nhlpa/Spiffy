@@ -35,11 +35,12 @@ namespace Spiffy
         /// <typeparam name="T"></typeparam>
         /// <param name="dbCommand"></param>
         /// <param name="map"></param>
+        /// <param name="commandBehavior"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Query<T>(this IDbCommand dbCommand, Func<IDataReader, T> map) =>
+        public static IEnumerable<T> Query<T>(this IDbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
             dbCommand.Do(cmd =>
             {
-                using (var rd = cmd.TryExecuteReader())
+                using (var rd = cmd.TryExecuteReader(commandBehavior))
                 {
                     var records = new HashSet<T>();
 
@@ -58,11 +59,12 @@ namespace Spiffy
         /// <typeparam name="T"></typeparam>
         /// <param name="dbCommand"></param>
         /// <param name="map"></param>
+        /// <param name="commandBehavior"></param>
         /// <returns></returns>
-        public static T QuerySingle<T>(this IDbCommand dbCommand, Func<IDataReader, T> map) =>
+        public static T QuerySingle<T>(this IDbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
             dbCommand.Do(cmd =>
             {
-                using (var rd = cmd.TryExecuteReader())
+                using (var rd = cmd.TryExecuteReader(commandBehavior))
                 {
                     if (rd.Read())
                     {
@@ -77,9 +79,11 @@ namespace Spiffy
 
         /// <summary>
         /// Execute paramterized query and manually cursor IDataReader.
+        /// <param name="cmd"></param>
+        /// <param name="commandBehavior"></param>
         /// </summary>
-        public static IDataReader Read(this IDbCommand cmd) =>
-          cmd.TryExecuteReader();
+        public static IDataReader Read(this IDbCommand cmd, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
+          cmd.TryExecuteReader(commandBehavior);
 
         //
         // Async
@@ -197,12 +201,12 @@ namespace Spiffy
             }
         }
 
-        private static IDataReader TryExecuteReader(this IDbCommand cmd)
+        private static IDataReader TryExecuteReader(this IDbCommand cmd, CommandBehavior commandBehavior)
         {
             try
             {
                 cmd.Connection.TryOpenConnection();
-                return cmd.ExecuteReader();
+                return cmd.ExecuteReader(commandBehavior);
             }
             catch (Exception ex)
             {

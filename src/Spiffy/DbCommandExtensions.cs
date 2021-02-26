@@ -35,11 +35,12 @@ namespace Spiffy
         /// <typeparam name="T"></typeparam>
         /// <param name="dbCommand"></param>
         /// <param name="map"></param>
+        /// <param name="commandBehavior"></param>
         /// <returns></returns>
-        public async static Task<IEnumerable<T>> QueryAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map) =>
+        public async static Task<IEnumerable<T>> QueryAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
             await dbCommand.DoAsync(async cmd =>
             {
-                using (var rd = await dbCommand.TryExecuteReaderAsync())
+                using (var rd = await dbCommand.TryExecuteReaderAsync(commandBehavior))
                 {
                     var records = new HashSet<T>();
 
@@ -58,11 +59,12 @@ namespace Spiffy
         /// <typeparam name="T"></typeparam>
         /// <param name="dbCommand"></param>
         /// <param name="map"></param>
+        /// <param name="commandBehavior"></param>
         /// <returns></returns>
-        public async static Task<T> QuerySingleAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map) =>
+        public async static Task<T> QuerySingleAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
             await dbCommand.DoAsync(async cmd =>
             {
-                using (var rd = await dbCommand.TryExecuteReaderAsync())
+                using (var rd = await dbCommand.TryExecuteReaderAsync(commandBehavior))
                 {
                     if (rd.Read())
                     {
@@ -77,9 +79,11 @@ namespace Spiffy
 
         /// <summary>
         /// Asynchronously execute paramterized query and manually cursor IDataReader.
+        /// <param name="dbCommand"></param>
+        /// <param name="commandBehavior"></param>
         /// </summary>
-        public async static Task<IDataReader> ReadAsync(this DbCommand dbCommand) =>
-          await dbCommand.TryExecuteReaderAsync();
+        public async static Task<IDataReader> ReadAsync(this DbCommand dbCommand, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
+          await dbCommand.TryExecuteReaderAsync(commandBehavior);
 
         private static async Task<T> DoAsync<T>(this DbCommand cmd, Func<DbCommand, Task<T>> func)
         {
@@ -128,12 +132,12 @@ namespace Spiffy
             }
         }
 
-        private async static Task<IDataReader> TryExecuteReaderAsync(this DbCommand cmd)
+        private async static Task<IDataReader> TryExecuteReaderAsync(this DbCommand cmd, CommandBehavior commandBehavior)
         {
             try
             {
                 cmd.Connection.TryOpenConnection();
-                return await cmd.ExecuteReaderAsync();
+                return await cmd.ExecuteReaderAsync(commandBehavior);
             }
             catch (Exception ex)
             {
