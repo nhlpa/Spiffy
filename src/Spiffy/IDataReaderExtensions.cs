@@ -25,6 +25,11 @@ namespace Spiffy
         public static bool ReadBoolean(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetBoolean);
 
         /// <summary>
+        /// Read bool from IDataReader
+        /// </summary>
+        public static bool ReadBool(this IDataReader rd, string field) => rd.ReadBoolean(field);
+
+        /// <summary>
         /// Read byte from IDataReader
         /// </summary>
         public static byte ReadByte(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetByte);
@@ -43,6 +48,11 @@ namespace Spiffy
         /// Read int from IDataReader
         /// </summary>
         public static int ReadInt32(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetInt32);
+
+        /// <summary>
+        /// Read int from IDataReader
+        /// </summary>
+        public static int ReadInt(this IDataReader rd, string field) => rd.ReadInt32(field);
 
         /// <summary>
         /// Read long from IDataReader
@@ -93,6 +103,11 @@ namespace Spiffy
         public static bool? ReadNullableBoolean(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetBoolean);
 
         /// <summary>
+        /// Read bool? from IDataReader
+        /// </summary>
+        public static bool? ReadNullableBool(this IDataReader rd, string field) => rd.ReadNullableBoolean(field);
+
+        /// <summary>
         /// Read byte? from IDataReader
         /// </summary>
         public static byte? ReadNullableByte(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetByte);
@@ -111,6 +126,11 @@ namespace Spiffy
         /// Read int? from IDataReader
         /// </summary>
         public static int? ReadNullableInt32(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetInt32);
+
+        /// <summary>
+        /// Read int? from IDataReader
+        /// </summary>
+        public static int? ReadNullableInt(this IDataReader rd, string field) => rd.ReadNullableInt32(field);
 
         /// <summary>
         /// Read long? from IDataReader
