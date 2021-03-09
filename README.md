@@ -101,7 +101,7 @@ var sql = "SELECT author_id, full_name FROM author";
 
 using var cmd = new DbCommandBuilder(connection, sql).Build();
 
-var authors = cmd.Query(cmd, Author.FromDataReader);
+var authors = cmd.Query(Author.FromDataReader);
 ```
 
 ### Query for a single strongly-type result
@@ -114,7 +114,7 @@ var param = new DbParams("author_id", authorId);
 using var cmd = new DbCommandBuilder(connection, sql, param).Build();
 
 // This method is optimized to dispose the `IDataReader` after safely reading the first `IDataRecord
-var author = connection.QuerySingle(cmd, Author.FromDataReader);
+var author = cmd.QuerySingle(Author.FromDataReader);
 ```
 
 ### Execute a statement multiple times
@@ -126,7 +126,7 @@ var paramList = authors.Select(a => new DbParams("full_name", a.FullName));
 
 using var cmd = new DbCommandBuilder(connection, sql).Build();
 
-connection.ExecMany(cmd, paramList);
+cmd.ExecMany(paramList);
 ```
 
 ### Execute a statement transactionally
@@ -143,7 +143,7 @@ using var transaction = connection.TryBeginTransaction();
 
 using var cmd = new DbCommandBuilder(tran, sql, param).Build();
 
-transaction.Exec(cmd);
+cmd.Exec();
 
 transaction.TryCommit();
 ```
@@ -173,10 +173,12 @@ Assume we have an active IDataReader called rd and are currently reading a row, 
 public static string ReadString(this IDataReader rd, string field);
 public static char ReadChar(this IDataReader rd, string field);
 public static bool ReadBoolean(this IDataReader rd, string field);
+public static bool ReadBool(this IDataReader rd, string field);
 public static byte ReadByte(this IDataReader rd, string field);
 public static short ReadInt16(this IDataReader rd, string field);
 public static short ReadShort(this IDataReader rd, string field);
 public static int ReadInt32(this IDataReader rd, string field);
+public static int ReadInt(this IDataReader rd, string field);
 public static int ReadInt(this IDataReader rd, string field);
 public static long ReadInt64(this IDataReader rd, string field);
 public static long ReadLong(this IDataReader rd, string field);
@@ -187,10 +189,12 @@ public static Guid ReadGuid(this IDataReader rd, string field);
 public static DateTime ReadDateTime(this IDataReader rd, string field);
 
 public static bool? ReadNullableBoolean(this IDataReader rd, string field);
+public static bool? ReadNullableBool(this IDataReader rd, string field);
 public static byte? ReadNullableByte(this IDataReader rd, string field);
 public static short? ReadNullableInt16(this IDataReader rd, string field);
 public static short? ReadNullableShort(this IDataReader rd, string field);
 public static int? ReadNullableInt32(this IDataReader rd, string field);
+public static int? ReadNullableInt(this IDataReader rd, string field);
 public static int? ReadNullableInt(this IDataReader rd, string field);
 public static long? ReadNullableInt64(this IDataReader rd, string field);
 public static long? ReadNullableLong(this IDataReader rd, string field);
