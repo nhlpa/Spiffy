@@ -130,7 +130,17 @@ namespace Spiffy
         /// <param name="paramList"></param>
         /// <returns></returns>
         public static Task ExecManyAsync(this IDbCommand dbCommand, IEnumerable<DbParams> paramList) =>
-            (dbCommand as DbCommand).ExecManyAsync(paramList); 
+            (dbCommand as DbCommand).ExecManyAsync(paramList);
+
+        /// <summary>
+        /// Asynchronously execute parameterized query, and return scalar object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dbCommand"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static Task<object> ScalarAsync(this IDbCommand dbCommand) =>
+            (dbCommand as DbCommand).ScalarAsync();
 
         /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.

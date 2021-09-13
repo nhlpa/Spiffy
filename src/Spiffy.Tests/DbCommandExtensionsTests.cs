@@ -76,6 +76,22 @@ namespace Spiffy.Tests
         }
 
         [Fact]
+        public async Task CanScalarAsync()
+        {
+            var expected = _testDb.GenerateRandomString();
+
+            var sql = "SELECT @description AS description";
+            var param = new DbParams("description", expected);
+
+            using var conn = _testDb.NewConnection();
+            using var cmd = new DbCommandBuilder(conn, sql, param).Build();
+
+            var result = (await cmd.ScalarAsync()) as string;
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
         public async Task CanQueryAsync()
         {
             var expected = _testDb.GenerateRandomString();

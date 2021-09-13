@@ -74,6 +74,22 @@ namespace Spiffy.Tests
         }
 
         [Fact]
+        public void CanScalar()
+        {
+            var expected = _testDb.GenerateRandomString();
+
+            var sql = "SELECT @description AS description";
+            var param = new DbParams("description", expected);
+
+            using var conn = _testDb.NewConnection();
+            using var cmd = new DbCommandBuilder(conn, sql, param).Build();
+
+            var result = cmd.Scalar() as string;
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
         public void CanQuery()
         {
             var expected = _testDb.GenerateRandomString();

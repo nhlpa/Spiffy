@@ -34,7 +34,7 @@ namespace Spiffy
         /// </summary>        
         /// <param name="dbCommand"></param>
         /// <returns></returns>
-        public static async Task<object> Scalar(this DbCommand dbCommand) =>
+        public static async Task<object> ScalarAsync(this DbCommand dbCommand) =>
             await dbCommand.DoAsync(async cmd => await cmd.ExecuteScalarAsync());
 
         /// <summary>
