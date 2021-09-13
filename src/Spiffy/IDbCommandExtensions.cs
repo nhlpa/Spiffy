@@ -13,6 +13,25 @@ namespace Spiffy
     public static class IDbCommandExtensions
     {
         /// <summary>
+        /// Assing DbParams to IDbCommand
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="param"></param>
+        public static void SetDbParams(this IDbCommand cmd, DbParams param)
+        {
+            if (param != null)
+            {
+                foreach (var p in param)
+                {
+                    var cmdParam = cmd.CreateParameter();
+                    cmdParam.ParameterName = p.Key;
+                    cmdParam.Value = p.Value ?? DBNull.Value;
+                    cmd.Parameters.Add(cmdParam);
+                }
+            }
+        }
+
+        /// <summary>
         /// Execute parameterized query with no results
         /// </summary>
         /// <param name="dbCommand"></param>
@@ -131,19 +150,6 @@ namespace Spiffy
         public static Task<IDataReader> ReadAsync(this IDbCommand dbCommand) =>
           (dbCommand as DbCommand).ReadAsync();
 
-        internal static void SetDbParams(this IDbCommand cmd, DbParams param)
-        {
-            if (param != null)
-            {
-                foreach (var p in param)
-                {
-                    var cmdParam = cmd.CreateParameter();
-                    cmdParam.ParameterName = p.Key;
-                    cmdParam.Value = p.Value ?? DBNull.Value;
-                    cmd.Parameters.Add(cmdParam);
-                }
-            }
-        }
 
         internal static void TryRollback(this IDbCommand cmd)
         {

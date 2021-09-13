@@ -40,7 +40,7 @@ dotnet add package Spiffy
 
 ```csharp
 using System;
-using Microsoft.Data.SQLite;
+using System.Data.Sqlite;
 using Spiffy;
 
 namespace SpiffyQuickStart
