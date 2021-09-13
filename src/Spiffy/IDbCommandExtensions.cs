@@ -49,6 +49,14 @@ namespace Spiffy
             dbCommand.DoMany(paramList, cmd => cmd.ExecuteNonQuery());
 
         /// <summary>
+        /// Execute parameterized query and return single object value.
+        /// </summary>        
+        /// <param name="dbCommand"></param>
+        /// <returns></returns>
+        public static object Scalar(this IDbCommand dbCommand) =>
+            dbCommand.Do(cmd => cmd.ExecuteScalar());
+
+        /// <summary>
         /// Execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>

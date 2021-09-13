@@ -30,6 +30,14 @@ namespace Spiffy
             await dbCommand.DoManyAsync(paramList, async cmd => await cmd.ExecuteNonQueryAsync());
 
         /// <summary>
+        /// Asynchronously execute parameterized query and return single object value.
+        /// </summary>        
+        /// <param name="dbCommand"></param>
+        /// <returns></returns>
+        public static async Task<object> Scalar(this DbCommand dbCommand) =>
+            await dbCommand.DoAsync(async cmd => await cmd.ExecuteScalarAsync());
+
+        /// <summary>
         /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
         /// </summary>
         /// <typeparam name="T"></typeparam>
