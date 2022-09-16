@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Spiffy\Spiffy.csproj" />
+    <ProjectReference Include="..\..\src\Spiffy\Spiffy.csproj" />
   </ItemGroup>
 
 </Project>
