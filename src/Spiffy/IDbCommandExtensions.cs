@@ -50,7 +50,7 @@ namespace Spiffy
 
         /// <summary>
         /// Execute parameterized query and return single object value.
-        /// </summary>        
+        /// </summary>
         /// <param name="dbCommand"></param>
         /// <returns></returns>
         public static object Scalar(this IDbCommand dbCommand) =>
@@ -135,9 +135,7 @@ namespace Spiffy
         /// <summary>
         /// Asynchronously execute parameterized query, and return scalar object
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="dbCommand"></param>
-        /// <param name="map"></param>
         /// <returns></returns>
         public static Task<object> ScalarAsync(this IDbCommand dbCommand) =>
             (dbCommand as DbCommand).ScalarAsync();

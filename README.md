@@ -1,7 +1,8 @@
-# Spiffy - simple data access for .NET 
+# Spiffy - simple data access for .NET
 
 [![NuGet Version](https://img.shields.io/nuget/v/Spiffy.svg)](https://www.nuget.org/packages/Spiffy)
-[![Build Status](https://travis-ci.org/pimbrouwers/Spiffy.svg?branch=master)](https://travis-ci.org/pimbrouwers/Spiffy)
+[![build](https://github.com/nhlpa/Spiffy/actions/workflows/build.yml/badge.svg)](https://github.com/nhlpa/Spiffy/actions/workflows/build.yml)
+
 
 Spiffy is a well-tested library that aims to make working with [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) from C# *a lot* simpler.
 
@@ -50,16 +51,16 @@ namespace SpiffyQuickStart
     const connectionString = "{your connection string}";
 
     static void Main(string[] args)
-    {            
+    {
       var sql = "SELECT author_id, full_name FROM author WHERE author_id = @author_id";
-      
+
       var param = new DbParams("author_id", 1);
 
-      using var connection = new SqliteConnection(connectionString);            
-      
+      using var connection = new SqliteConnection(connectionString);
+
       using var cmd = new DbCommandBuilder(connection, sql, param).Build();
-            
-      cmd.Query(cmd, rd => 
+
+      cmd.Query(cmd, rd =>
         Console.WriteLine("Hello {0}" rd.ReadString("full_name")));
     }
   }
@@ -83,7 +84,7 @@ public class Author
 {
   public int AuthorId { get; set; }
   public string FullName { get; set; }
-        
+
   public static Author FromDataReader (IDataReader rd)
   {
     return new Author() {
@@ -218,8 +219,8 @@ It's an homage to [Dapper](https://github.com/StackExchange/Dapper) which was tr
 
 ## Find a bug?
 
-There's an [issue](https://github.com/pimbrouwers/Spiffy/issues) for that.
+There's an [issue](https://github.com/nhlpa/Spiffy/issues) for that.
 
 ## License
 
-Built with ♥ by [Pim Brouwers](https://github.com/pimbrouwers) in Toronto, ON. Licensed under [Apache License 2.0](https://github.com/pimbrouwers/Spiffy/blob/master/LICENSE).
+Built with ♥ by [NHLPA Engineering](https://github.com/nhlpa) in Toronto, ON. Licensed under [MIT](https://github.com/nhlpa/Spiffy/blob/master/LICENSE).
