@@ -1,8 +1,9 @@
+using NuGet.Frameworks;
 using Xunit;
 
 namespace Spiffy.Tests
-{    
-    public class DbCommandParamTests
+{
+    public class DbParamTests
     {
         [Fact]
         public void ShouldCreateEmptyParams()
@@ -28,6 +29,22 @@ namespace Spiffy.Tests
             p.Add("key2", 2);
             Assert.Equal(1, p["key"]);
             Assert.Equal(2, p["key2"]);
+        }
+
+        [Fact]
+        public void ShouldCombineParams()
+        {
+          var p1 = new DbParams("key", 1);
+          p1.Add("key2", 2);
+
+          var p2 = new DbParams("key1", 3);
+          p2.Add("key2", "WRONG");
+
+          p1.Add(p2);
+
+          Assert.Equal(1, p1["key"]);
+          Assert.Equal(2, p1["key2"]);
+          Assert.Equal(3, p1["key1"]);
         }
     }
 }
