@@ -11,12 +11,16 @@ public class TestDbCollection : ICollectionFixture<TestDb>
 {
 }
 
-public class TestDb
+public sealed class TestDbConnectionFactory : IDbConnectionFactory
 {
   private const string _dbName = "Spiffy.Tests.db";
   private const string _connectionString = $"Data Source={_dbName}";
+  public IDbConnection NewConnection() => new SqliteConnection(_connectionString);
+}
 
-  public TestDb()
+public class TestDb : DbFixture<TestDbConnectionFactory>
+{
+  public TestDb() : base(new TestDbConnectionFactory())
   {
     using var conn = NewConnection();
 
@@ -29,8 +33,6 @@ public class TestDb
     using var cmd = cmdBuilder.CommandText(sql).Build();
     cmd.Exec();
   }
-
-  public Func<IDbConnection> NewConnection => () => new SqliteConnection(_connectionString);
 
   public string GenerateRandomString() => Path.GetRandomFileName().Replace(".", "");
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Source.Sql
+namespace Spiffy
 {
   /// <summary>
   /// Represents the ability to obtain new unit instances to perform 
@@ -12,7 +12,7 @@ namespace Source.Sql
   /// the database directly.
   /// </summary>
   /// <typeparam name="TConn">The IDbConnectionFactory to use for connection creation.</typeparam>
-  public class DbFixture<TConn> : IDbFixture<TConn>, IDbHandler, IDbHandlerAsync where TConn : IDbConnectionFactory
+  public class DbFixture<TConn> : IDbBatchFactory, IDbConnectionFactory, IDbHandler, IDbHandlerAsync where TConn : IDbConnectionFactory
   {
     private readonly TConn _connectionFactory;
 
@@ -26,6 +26,25 @@ namespace Source.Sql
         throw new ArgumentNullException(nameof(connectionFactory));
 
       _connectionFactory = connectionFactory;
+    }
+  
+    /// <summary>
+    /// Create a new IDbConnection, which represents a interface to a database.
+    /// </summary>
+    /// <returns></returns>
+    public IDbConnection NewConnection() =>
+      _connectionFactory.NewConnection();
+      
+    /// <summary>
+    /// Create a new IDbBatch, which represents a database unit of work.
+    /// </summary>
+    /// <returns></returns>
+    public IDbBatch NewBatch()
+    {
+      var conn = _connectionFactory.NewConnection();
+      conn.TryOpenConnection();
+      var tran = conn.TryBeginTransaction();
+      return new DbBatch(conn, tran);
     }
 
     /// <summary>
@@ -78,18 +97,6 @@ namespace Source.Sql
       var batch = NewBatch();
       await fn(batch);
       batch.Commit();
-    }
-
-    /// <summary>
-    /// Create a new IDbBatch, which represents a database unit of work.
-    /// </summary>
-    /// <returns></returns>
-    public IDbBatch NewBatch()
-    {
-      var conn = _connectionFactory.NewConnection();
-      conn.TryOpenConnection();
-      var tran = conn.TryBeginTransaction();
-      return new DbBatch(conn, tran);
     }
 
     /// <summary>
@@ -231,4 +238,3 @@ namespace Source.Sql
         BatchAsync(b => b.QuerySingleAsync(sql, map));
   }
 }
-

@@ -3,7 +3,7 @@ using System;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Source.Sql
+namespace Spiffy
 {
   /// <summary>
   /// Database unit of work.

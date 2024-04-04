@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Source.Sql
+namespace Spiffy
 {
   /// <summary>
   /// Represents the ability to do work against a data source.

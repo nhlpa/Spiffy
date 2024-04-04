@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Source.Sql
+namespace Spiffy
 {
   /// <summary>
   /// Represents the ability to do work asynchronously against a data source.
@@ -74,4 +74,3 @@ namespace Source.Sql
     Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map);
   }
 }
-

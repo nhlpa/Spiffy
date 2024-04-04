@@ -54,6 +54,21 @@ public class IDbCommandExtensionsTests
   }
 
   [Fact]
+  public void CanExecBatch()
+  {    
+    var descripton = _testDb.GenerateRandomString();
+
+    var sql = @"
+        INSERT INTO test_values (description) VALUES (@description);
+        SELECT description FROM test_values WHERE description = @description;";
+    var param = new DbParams("description", descripton);
+
+    var exists = _testDb.QuerySingle(sql, param, rd => rd.ReadString("description"));
+    
+    Assert.NotNull(exists);
+  }
+
+  [Fact]
   public void CanExecWithRollback()
   {
     var descripton = _testDb.GenerateRandomString();

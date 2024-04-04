@@ -1,9 +1,9 @@
 using System.Data;
 
-namespace Source.Sql
+namespace Spiffy
 {
   /// <summary>
-  /// Represents a connection interface to a specific database.
+  /// Represents the ability to create new IDbConnection instances.
   /// </summary>
   public interface IDbConnectionFactory
   {
