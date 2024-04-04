@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>Spiffy</AssemblyName>
     <RootNamespace>Spiffy</RootNamespace>
-    <Version>3.1.4</Version>
+    <Version>4.0.0</Version>
     <CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
 
     <!-- General Info-->
@@ -46,14 +46,6 @@
     <Compile Include="Extensions\*.cs" />
     <Compile Include="Batch\*.cs" />
     <Compile Include="*.cs" />
-    <!-- <Compile Include="DbCommandBuilder.cs" />
-    <Compile Include="Extensions\IDbCommandExtensions.cs" />
-    <Compile Include="DbException.cs" />
-    <Compile Include="DbParams.cs" />
-    <Compile Include="Extensions\DbCommandExtensions.cs" />
-    <Compile Include="Extensions\IDataReaderExtensions.cs" />
-    <Compile Include="Extensions\IDbConnectionExtensions.cs" />
-    <Compile Include="Extensions\IDbTransactionExtensions.cs" /> -->
   </ItemGroup>
 
   <ItemGroup>
