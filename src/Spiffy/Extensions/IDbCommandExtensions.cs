@@ -69,7 +69,7 @@ namespace Spiffy
             {
                 using (var rd = cmd.TryExecuteReader(commandBehavior))
                 {
-                    var records = new HashSet<T>();
+                    var records = new List<T>();
 
                     while (rd.Read())
                     {

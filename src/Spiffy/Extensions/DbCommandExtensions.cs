@@ -31,7 +31,7 @@ namespace Spiffy
 
         /// <summary>
         /// Asynchronously execute parameterized query and return single object value.
-        /// </summary>        
+        /// </summary>
         /// <param name="dbCommand"></param>
         /// <returns></returns>
         public static async Task<object> ScalarAsync(this DbCommand dbCommand) =>
@@ -50,7 +50,7 @@ namespace Spiffy
             {
                 using (var rd = await dbCommand.TryExecuteReaderAsync(commandBehavior))
                 {
-                    var records = new HashSet<T>();
+                    var records = new List<T>();
 
                     while (rd.Read())
                     {
