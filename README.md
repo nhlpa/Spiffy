@@ -52,13 +52,12 @@ namespace SpiffyQuickStart
 
     static void Main(string[] args)
     {
-      var sql = "SELECT author_id, full_name FROM author WHERE author_id = @author_id";
-
-      var param = new DbParams("author_id", 1);
-
       using var connection = new SqliteConnection(connectionString);
 
-      using var cmd = new DbCommandBuilder(connection, sql, param).Build();
+      using var cmd = new DbCommandBuilder(connection)
+        .CommandText("SELECT author_id, full_name FROM author WHERE author_id = @author_id")
+        .DbParams(new DbParams("author_id", 1))
+        .Build();
 
       cmd.Query(cmd, rd =>
         Console.WriteLine("Hello {0}" rd.ReadString("full_name")));
@@ -98,9 +97,9 @@ public class Author
 ### Query for multiple strongly-type results
 
 ```csharp
-var sql = "SELECT author_id, full_name FROM author";
-
-using var cmd = new DbCommandBuilder(connection, sql).Build();
+using var cmd = new DbCommandBuilder(connection)
+  .CommandText("SELECT author_id, full_name FROM author")
+  .Build();
 
 var authors = cmd.Query(Author.FromDataReader);
 ```
@@ -108,11 +107,10 @@ var authors = cmd.Query(Author.FromDataReader);
 ### Query for a single strongly-type result
 
 ```csharp
-var sql = "SELECT author_id, full_name FROM author WHERE author_id = @author_id";
-
-var param = new DbParams("author_id", authorId);
-
-using var cmd = new DbCommandBuilder(connection, sql, param).Build();
+using var cmd = new DbCommandBuilder(connection)
+  .CommandText("SELECT author_id, full_name FROM author WHERE author_id = @author_id")
+  .DbParams(new DbParams("author_id", authorId))
+  .Build();
 
 // This method is optimized to dispose the `IDataReader` after safely reading the first `IDataRecord
 var author = cmd.QuerySingle(Author.FromDataReader);
@@ -121,28 +119,26 @@ var author = cmd.QuerySingle(Author.FromDataReader);
 ### Execute a statement multiple times
 
 ```csharp
-var sql = "INSERT INTO author (full_name) VALUES (@full_name)";
+using var cmd = new DbCommandBuilder(connection)
+  .CommandText("INSERT INTO author (full_name) VALUES (@full_name)")
+  .Build();
 
 var paramList = authors.Select(a => new DbParams("full_name", a.FullName));
-
-using var cmd = new DbCommandBuilder(connection, sql).Build();
-
 cmd.ExecMany(paramList);
 ```
 
 ### Execute a statement transactionally
 
 ```csharp
-var sql = "UPDATE author SET full_name = @full_name where author_id = @author_id";
-
-var param = new DbParams() {
-    { "author_id", author.AuthorId },
-    { "full_name", author.FullName }
-};
-
 using var transaction = connection.TryBeginTransaction();
 
-using var cmd = new DbCommandBuilder(tran, sql, param).Build();
+using var cmd = new DbCommandBuilder(tran)
+  .CommandText("UPDATE author SET full_name = @full_name where author_id = @author_id")
+  .DbParams(new DbParams() {
+    { "author_id", author.AuthorId },
+    { "full_name", author.FullName }
+  })
+  .Build();
 
 cmd.Exec();
 
@@ -152,9 +148,9 @@ transaction.TryCommit();
 ### Asynchronously execute a scalar command (single value)
 
 ```csharp
-var sql = "SELECT COUNT(*) AS author_count FROM author";
-
-using var cmd = new DbCommandBuilder(connection, sql).Build();
+using var cmd = new DbCommandBuilder(connection)
+  .CommandText("SELECT COUNT(*) AS author_count FROM author")
+  .Build();
 
 var count = await cmd.QuerySingleAsync(rd => rd.ReadInt32("author_count"));
 ```
