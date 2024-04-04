@@ -1,38 +1,36 @@
+namespace Spiffy.Tests;
+
 using System;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.IO;
 using Xunit;
 
-namespace Spiffy.Tests
+[CollectionDefinition("TestDb")]
+public class TestDbCollection : ICollectionFixture<TestDb>
 {
-    [CollectionDefinition("TestDb")]
-    public class TestDbCollection : ICollectionFixture<TestDb>
-    {
-    }
+}
 
-    public class TestDb : IDisposable
-    {
-        private const string _connectionString = "Data Source=.\\testdb.db;Version=3;New=true;";
-        
-        public TestDb()
-        {            
-            using var conn = NewConnection();
+public class TestDb
+{
+  private const string _dbName = "Spiffy.Tests.db";
+  private const string _connectionString = $"Data Source={_dbName}";
 
-            var cmdBuilder = new DbCommandBuilder(conn);
+  public TestDb()
+  {
+    using var conn = NewConnection();
 
-            using var fs = File.OpenRead("schema.sql");
-            using var sr = new StreamReader(fs);
-            var sql = sr.ReadToEnd();
+    var cmdBuilder = new DbCommandBuilder(conn);
 
-            using var cmd = cmdBuilder.CommandText(sql).Build();
-            cmd.Exec();
-        }
+    using var fs = File.OpenRead("schema.sql");
+    using var sr = new StreamReader(fs);
+    var sql = sr.ReadToEnd();
 
-        public Func<IDbConnection> NewConnection => () => new SQLiteConnection(_connectionString);
+    using var cmd = cmdBuilder.CommandText(sql).Build();
+    cmd.Exec();
+  }
 
-        public string GenerateRandomString() => Path.GetRandomFileName().Replace(".", "");
+  public Func<IDbConnection> NewConnection => () => new SqliteConnection(_connectionString);
 
-        public void Dispose() => File.Delete("test.db");
-    }
+  public string GenerateRandomString() => Path.GetRandomFileName().Replace(".", "");
 }

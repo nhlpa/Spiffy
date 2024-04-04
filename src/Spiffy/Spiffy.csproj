@@ -43,14 +43,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="DbCommandBuilder.cs" />
-    <Compile Include="IDbCommandExtensions.cs" />
+    <Compile Include="Extensions\*.cs" />
+    <Compile Include="Batch\*.cs" />
+    <Compile Include="*.cs" />
+    <!-- <Compile Include="DbCommandBuilder.cs" />
+    <Compile Include="Extensions\IDbCommandExtensions.cs" />
     <Compile Include="DbException.cs" />
     <Compile Include="DbParams.cs" />
-    <Compile Include="DbCommandExtensions.cs" />
-    <Compile Include="IDataReaderExtensions.cs" />
-    <Compile Include="IDbConnectionExtensions.cs" />
-    <Compile Include="IDbTransactionExtensions.cs" />
+    <Compile Include="Extensions\DbCommandExtensions.cs" />
+    <Compile Include="Extensions\IDataReaderExtensions.cs" />
+    <Compile Include="Extensions\IDbConnectionExtensions.cs" />
+    <Compile Include="Extensions\IDbTransactionExtensions.cs" /> -->
   </ItemGroup>
 
   <ItemGroup>
