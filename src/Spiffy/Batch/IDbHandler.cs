@@ -71,5 +71,22 @@ namespace Spiffy
     /// <param name="map"></param>
     /// <returns></returns>
     T QuerySingle<T>(string sql, Func<IDataReader, T> map);
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="param"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    T Read<T>(string sql, DbParams param, Func<IDataReader, T> read);
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    T Read<T>(string sql, Func<IDataReader, T> read);
   }
 }

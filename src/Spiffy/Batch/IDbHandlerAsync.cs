@@ -13,7 +13,7 @@ namespace Spiffy
   {
     /// <summary>
     /// Asynchronously execute parameterized query.
-    /// </summary>        
+    /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
@@ -21,7 +21,7 @@ namespace Spiffy
 
     /// <summary>
     /// Asynchronously execute parameterized query multiple times
-    /// </summary>        
+    /// </summary>
     /// <param name="sql"></param>
     /// <param name="paramList"></param>
     /// <returns></returns>
@@ -29,7 +29,7 @@ namespace Spiffy
 
     /// <summary>
     /// Asynchronously execute parameterized query and return single-value.
-    /// </summary>              
+    /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
@@ -38,7 +38,7 @@ namespace Spiffy
     /// <summary>
     /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
     /// </summary>
-    /// <typeparam name="T"></typeparam>        
+    /// <typeparam name="T"></typeparam>
     /// <param name="sql"></param>
     /// <param name="map"></param>
     /// <param name="param"></param>
@@ -57,7 +57,7 @@ namespace Spiffy
     /// <summary>
     /// Asynchronously execute paramterized query, read only first record and apply mapping.
     /// </summary>
-    /// <typeparam name="T"></typeparam>        
+    /// <typeparam name="T"></typeparam>
     /// <param name="sql"></param>
     /// <param name="map"></param>
     /// <param name="param"></param>
@@ -72,5 +72,22 @@ namespace Spiffy
     /// <param name="map"></param>
     /// <returns></returns>
     Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map);
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="param"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    Task<T> ReadAsync<T>(string sql, DbParams param, Func<IDataReader, T> read);
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    Task<T> ReadAsync<T>(string sql, Func<IDataReader, T> read);
   }
 }

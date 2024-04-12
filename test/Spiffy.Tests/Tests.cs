@@ -55,7 +55,7 @@ public class IDbCommandExtensionsTests
 
   [Fact]
   public void CanExecBatch()
-  {    
+  {
     var descripton = _testDb.GenerateRandomString();
 
     var sql = @"
@@ -64,7 +64,7 @@ public class IDbCommandExtensionsTests
     var param = new DbParams("description", descripton);
 
     var exists = _testDb.QuerySingle(sql, param, rd => rd.ReadString("description"));
-    
+
     Assert.NotNull(exists);
   }
 
@@ -248,6 +248,22 @@ public class IDbCommandExtensionsTests
     });
 
     Assert.Equal(1, result);
+  }
+
+  [Fact]
+  public void LoadDataTableShouldWork()
+  {
+    var expected = _testDb.GenerateRandomString();
+    var sql = "SELECT 1 AS num1, 2 AS num2";
+    var dt = _testDb.Read(sql, rd =>
+    {
+      var dt = new System.Data.DataTable();
+      dt.Load(rd);
+      return dt;
+    });
+
+    Assert.Equal(2, dt.Columns.Count);
+    Assert.Single(dt.Rows);
   }
 
   [Fact]

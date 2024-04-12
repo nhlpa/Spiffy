@@ -139,9 +139,19 @@ namespace Spiffy
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="read"></param>
     /// <returns></returns>
-    public IDataReader Read(string sql, DbParams param = null) =>
-        Do(sql, param, cmd => cmd.Read());
+    public T Read<T>(string sql, DbParams param, Func<IDataReader, T> read) =>
+        Do(sql, param, cmd => cmd.Read(read));
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    public T Read<T>(string sql, Func<IDataReader, T> read) =>
+        Do(sql, null, cmd => cmd.Read(read));
 
     /// <summary>
     /// Asynchronously execute parameterized query.
@@ -218,9 +228,19 @@ namespace Spiffy
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
+    /// <param name="read"></param>
     /// <returns></returns>
-    public Task<IDataReader> ReadAsync(string sql, DbParams param = null) =>
-        DoAsync(sql, param, cmd => cmd.ReadAsync());
+    public Task<T> ReadAsync<T>(string sql, DbParams param, Func<IDataReader, T> read) =>
+        DoAsync(sql, param, cmd => cmd.ReadAsync(read));
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    public Task<T> ReadAsync<T>(string sql, Func<IDataReader, T> read) =>
+        DoAsync(sql, null, cmd => cmd.ReadAsync(read));
 
     /// <summary>
     /// Ensure the DbConnection and DbTransaction resources are properly disposed
@@ -235,12 +255,12 @@ namespace Spiffy
     {
       try
       {
-        var cmd = new DbCommandBuilder(_transaction, sql, param).Build();
+        var cmd = new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build();
         action(cmd);
       }
       catch (FailedExecutionException)
       {
-        // Rollback();
+        Rollback();
         throw;
       }
     }
@@ -249,12 +269,12 @@ namespace Spiffy
     {
       try
       {
-        var cmd = new DbCommandBuilder(_transaction, sql, param).Build();
+        var cmd = new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build();
         return func(cmd);
       }
       catch (FailedExecutionException)
       {
-        // Rollback();
+        Rollback();
         throw;
       }
     }

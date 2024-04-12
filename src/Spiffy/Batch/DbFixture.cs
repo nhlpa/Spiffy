@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Spiffy
 {
   /// <summary>
-  /// Represents the ability to obtain new unit instances to perform 
+  /// Represents the ability to obtain new unit instances to perform
   /// database-bound tasks transactionally, as well as query
   /// the database directly.
   /// </summary>
@@ -27,14 +27,14 @@ namespace Spiffy
 
       _connectionFactory = connectionFactory;
     }
-  
+
     /// <summary>
     /// Create a new IDbConnection, which represents a interface to a database.
     /// </summary>
     /// <returns></returns>
     public IDbConnection NewConnection() =>
       _connectionFactory.NewConnection();
-      
+
     /// <summary>
     /// Create a new IDbBatch, which represents a database unit of work.
     /// </summary>
@@ -63,7 +63,7 @@ namespace Spiffy
 
     /// <summary>
     /// Do work in an auto-batch that returns no results
-    /// </summary>        
+    /// </summary>
     /// <param name="fn"></param>
     /// <returns></returns>
     public void Batch(Action<IDbBatch> fn)
@@ -89,7 +89,7 @@ namespace Spiffy
 
     /// <summary>
     /// Do asynchronous work in an auto-batch that returns no results
-    /// </summary>        
+    /// </summary>
     /// <param name="fn"></param>
     /// <returns></returns>
     public async Task BatchAsync(Func<IDbBatch, Task> fn)
@@ -106,7 +106,7 @@ namespace Spiffy
     /// <param name="param"></param>
     /// <returns></returns>
     public void Exec(string sql, DbParams param = null) =>
-        Batch(b => b.Exec(sql, param));
+      Batch(b => b.Exec(sql, param));
 
     /// <summary>
     /// Execute parameterized query multiple times
@@ -115,16 +115,16 @@ namespace Spiffy
     /// <param name="param"></param>
     /// <returns></returns>
     public void ExecMany(string sql, IEnumerable<DbParams> param) =>
-        Batch(b => b.ExecMany(sql, param));
+      Batch(b => b.ExecMany(sql, param));
 
     /// <summary>
     /// Execute parameterized query and return single-value.
-    /// </summary>        
+    /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
     public object Scalar(string sql, DbParams param = null) =>
-        Batch(b => b.Scalar(sql, param));
+      Batch(b => b.Scalar(sql, param));
 
     /// <summary>
     /// Execute parameterized query, enumerate all records and apply mapping.
@@ -135,7 +135,7 @@ namespace Spiffy
     /// <param name="param"></param>
     /// <returns></returns>
     public IEnumerable<T> Query<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-        Batch(b => b.Query(sql, param, map));
+      Batch(b => b.Query(sql, param, map));
 
     /// <summary>
     /// Execute query, enumerate all records and apply mapping.
@@ -145,7 +145,7 @@ namespace Spiffy
     /// <param name="map"></param>
     /// <returns></returns>
     public IEnumerable<T> Query<T>(string sql, Func<IDataReader, T> map) =>
-        Batch(b => b.Query(sql, map));
+      Batch(b => b.Query(sql, map));
 
     /// <summary>
     /// Execute paramterized query, read only first record and apply mapping.
@@ -156,17 +156,36 @@ namespace Spiffy
     /// <param name="param"></param>
     /// <returns></returns>
     public T QuerySingle<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-        Batch(b => b.QuerySingle(sql, param, map));
+      Batch(b => b.QuerySingle(sql, param, map));
 
     /// <summary>
     /// Execute query, read only first record and apply mapping.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="sql"></param>
-    /// <param name="map"></param>        
+    /// <param name="map"></param>
     /// <returns></returns>
     public T QuerySingle<T>(string sql, Func<IDataReader, T> map) =>
-        Batch(b => b.QuerySingle(sql, map));
+      Batch(b => b.QuerySingle(sql, map));
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="param"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    public T Read<T>(string sql, DbParams param, Func<IDataReader, T> read) =>
+      Batch(b => b.Read(sql, param, read));
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    public T Read<T>(string sql, Func<IDataReader, T> read) =>
+      Batch(b => b.Read(sql, read));
 
     /// <summary>
     /// Asynchronously execute parameterized query.
@@ -175,7 +194,7 @@ namespace Spiffy
     /// <param name="param"></param>
     /// <returns></returns>
     public Task ExecAsync(string sql, DbParams param = null) =>
-        BatchAsync(b => b.ExecAsync(sql, param));
+      BatchAsync(b => b.ExecAsync(sql, param));
 
     /// <summary>
     /// Asynchronously execute parameterized query.
@@ -184,16 +203,16 @@ namespace Spiffy
     /// <param name="paramList"></param>
     /// <returns></returns>
     public Task ExecManyAsync(string sql, IEnumerable<DbParams> paramList) =>
-        BatchAsync(b => b.ExecManyAsync(sql, paramList));
+      BatchAsync(b => b.ExecManyAsync(sql, paramList));
 
     /// <summary>
     /// Asynchronously execute parameterized query and return single-value.
-    /// </summary>        
+    /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
     public Task<object> ScalarAsync(string sql, DbParams param = null) =>
-        BatchAsync(b => b.ScalarAsync(sql, param));
+      BatchAsync(b => b.ScalarAsync(sql, param));
 
     /// <summary>
     /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
@@ -204,17 +223,17 @@ namespace Spiffy
     /// <param name="param"></param>
     /// <returns></returns>
     public Task<IEnumerable<T>> QueryAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-        BatchAsync(b => b.QueryAsync(sql, param, map));
+      BatchAsync(b => b.QueryAsync(sql, param, map));
 
     /// <summary>
     /// Asynchronously execute query, enumerate all records and apply mapping.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="sql"></param>
-    /// <param name="map"></param>        
+    /// <param name="map"></param>
     /// <returns></returns>
     public Task<IEnumerable<T>> QueryAsync<T>(string sql, Func<IDataReader, T> map) =>
-        BatchAsync(b => b.QueryAsync(sql, map));
+      BatchAsync(b => b.QueryAsync(sql, map));
 
     /// <summary>
     /// Asynchronously execute paramterized query, read only first record and apply mapping.
@@ -225,16 +244,35 @@ namespace Spiffy
     /// <param name="param"></param>
     /// <returns></returns>
     public Task<T> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
-        BatchAsync(b => b.QuerySingleAsync(sql, param, map));
+      BatchAsync(b => b.QuerySingleAsync(sql, param, map));
 
     /// <summary>
     /// Asynchronously execute query, read only first record and apply mapping.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="sql"></param>
-    /// <param name="map"></param>        
+    /// <param name="map"></param>
     /// <returns></returns>
     public Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map) =>
-        BatchAsync(b => b.QuerySingleAsync(sql, map));
+      BatchAsync(b => b.QuerySingleAsync(sql, map));
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="param"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    public Task<T> ReadAsync<T>(string sql, DbParams param, Func<IDataReader, T> read) =>
+      BatchAsync(b => b.ReadAsync(sql, param, read));
+
+    /// <summary>
+    /// Execute paramterized query and manually cursor IDataReader.
+    /// </summary>
+    /// <param name="sql"></param>
+    /// <param name="read"></param>
+    /// <returns></returns>
+    public Task<T> ReadAsync<T>(string sql, Func<IDataReader, T> read) =>
+      BatchAsync(b => b.ReadAsync(sql, read));
   }
 }
