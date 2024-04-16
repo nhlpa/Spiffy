@@ -2,6 +2,7 @@ using Spiffy;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace Spiffy
@@ -251,99 +252,40 @@ namespace Spiffy
       _transaction.Dispose();
     }
 
-    private void Do(string sql, DbParams param, Action<IDbCommand> action)
-    {
-      try
-      {
-        var cmd = new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build();
-        action(cmd);
-      }
-      catch (FailedExecutionException)
-      {
-        Rollback();
-        throw;
-      }
-    }
+    private void Do(string sql, DbParams param, Action<IDbCommand> action) =>
+      action(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
 
-    private T Do<T>(string sql, DbParams param, Func<IDbCommand, T> func)
-    {
-      try
-      {
-        var cmd = new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build();
-        return func(cmd);
-      }
-      catch (FailedExecutionException)
-      {
-        Rollback();
-        throw;
-      }
-    }
+    private T Do<T>(string sql, DbParams param, Func<IDbCommand, T> func) =>
+      func(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
 
-    private async Task DoAsync(string sql, DbParams param, Func<System.Data.Common.DbCommand, Task> func)
-    {
-      try
-      {
-        var cmd = new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param).Build();
-        await func(cmd as System.Data.Common.DbCommand);
-      }
-      catch (FailedExecutionException)
-      {
-        Rollback();
-        throw;
-      }
-    }
+    private async Task DoAsync(string sql, DbParams param, Func<DbCommand, Task> func) =>
+      await func(new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param).Build() as DbCommand);
 
-    private async Task<T> DoAsync<T>(string sql, DbParams param, Func<System.Data.Common.DbCommand, Task<T>> func)
-    {
-      try
-      {
-        var cmd = new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param).Build();
-        return await func(cmd as System.Data.Common.DbCommand);
-      }
-      catch (FailedExecutionException)
-      {
-        Rollback();
-        throw;
-      }
-    }
+    private async Task<T> DoAsync<T>(string sql, DbParams param, Func<DbCommand, Task<T>> func) =>
+      await func(new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param).Build() as DbCommand);
 
     private void DoMany(string sql, IEnumerable<DbParams> paramList, Action<IDbCommand> func)
     {
-      try
-      {
-        var cmd = new DbCommandBuilder(_transaction, sql).Build();
+      var cmd = new DbCommandBuilder(_transaction, sql).Build();
 
-        foreach (var param in paramList)
-        {
-          cmd.Parameters.Clear();
-          cmd.SetDbParams(param);
-          func(cmd);
-        }
-      }
-      catch (FailedExecutionException)
+      foreach (var param in paramList)
       {
-        Rollback();
-        throw;
+        cmd.Parameters.Clear();
+        cmd.SetDbParams(param);
+        func(cmd);
       }
+
     }
 
     private async Task DoManyAsync(string sql, IEnumerable<DbParams> paramList, Func<System.Data.Common.DbCommand, Task> func)
     {
-      try
-      {
-        var cmd = new DbCommandBuilder(_transaction, sql).Build() as System.Data.Common.DbCommand;
+      var cmd = new DbCommandBuilder(_transaction, sql).Build() as System.Data.Common.DbCommand;
 
-        foreach (var param in paramList)
-        {
-          cmd.Parameters.Clear();
-          cmd.SetDbParams(param);
-          await func(cmd);
-        }
-      }
-      catch (FailedExecutionException)
+      foreach (var param in paramList)
       {
-        Rollback();
-        throw;
+        cmd.Parameters.Clear();
+        cmd.SetDbParams(param);
+        await func(cmd);
       }
     }
   }
