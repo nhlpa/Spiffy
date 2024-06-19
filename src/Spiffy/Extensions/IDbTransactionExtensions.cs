@@ -1,28 +1,27 @@
-﻿using System;
+﻿namespace Spiffy;
+
+using System;
 using System.Data;
 
-namespace Spiffy
+/// <summary>
+/// IDbTransaction extension methods
+/// </summary>
+public static class IDbTransactionExtensions
 {
     /// <summary>
-    /// IDbTransaction extension methods
+    /// Commit unit of work and cleanup.
+    /// Rolls back transaction and throws FailedCommitBatchException on failure
     /// </summary>
-    public static class IDbTransactionExtensions
+    public static void TryCommit(this IDbTransaction tran)
     {
-        /// <summary>
-        /// Commit unit of work and cleanup.
-        /// Rolls back transaction and throws FailedCommitBatchException on failure
-        /// </summary>
-        public static void TryCommit(this IDbTransaction tran)
+        try
         {
-            try
-            {
-                tran.Commit();
-            }
-            catch (Exception ex)
-            {
-                tran.Rollback();
-                throw new FailedCommitBatchException(ex);
-            }
+            tran.Commit();
+        }
+        catch (Exception ex)
+        {
+            tran.Rollback();
+            throw new FailedCommitBatchException(ex);
         }
     }
 }

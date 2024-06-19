@@ -5,14 +5,9 @@ using System.Linq;
 using Xunit;
 
 [Collection("TestDb")]
-public class IDbCommandExtensionsTests
+public class IDbCommandExtensionsTests(TestDb testDb)
 {
-    private readonly TestDb _testDb;
-
-    public IDbCommandExtensionsTests(TestDb testDb)
-    {
-        _testDb = testDb;
-    }
+    private readonly TestDb _testDb = testDb;
 
     [Fact]
     public void CanExec()
@@ -281,7 +276,7 @@ public class IDbCommandExtensionsTests
           .Build();
 
         var result = cmd.QuerySingle(rd => rd.ReadBytes("data"));
-        var resultStr = System.Text.Encoding.UTF8.GetString(result);
+        var resultStr = System.Text.Encoding.UTF8.GetString(result ?? []);
         Assert.Equal(resultStr, testString);
     }
 }

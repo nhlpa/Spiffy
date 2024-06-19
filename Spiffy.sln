@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E98E7450-AA92-4741-A563-54937E412331}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spiffy", "src\Spiffy\Spiffy.csproj", "{F9048160-807F-4126-8015-D845534514AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{4539BA53-CE14-44DD-82E6-0B32B5022A0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spiffy.Tests", "test\Spiffy.Tests\Spiffy.Tests.csproj", "{A97C1767-8253-4679-9DB8-37837A1A5325}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9048160-807F-4126-8015-D845534514AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9048160-807F-4126-8015-D845534514AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9048160-807F-4126-8015-D845534514AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9048160-807F-4126-8015-D845534514AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A97C1767-8253-4679-9DB8-37837A1A5325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A97C1767-8253-4679-9DB8-37837A1A5325}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A97C1767-8253-4679-9DB8-37837A1A5325}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A97C1767-8253-4679-9DB8-37837A1A5325}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F9048160-807F-4126-8015-D845534514AC} = {E98E7450-AA92-4741-A563-54937E412331}
+		{A97C1767-8253-4679-9DB8-37837A1A5325} = {4539BA53-CE14-44DD-82E6-0B32B5022A0D}
+	EndGlobalSection
+EndGlobal

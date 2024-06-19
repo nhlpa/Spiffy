@@ -1,23 +1,22 @@
-using Spiffy;
+namespace Spiffy;
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Spiffy
+/// <summary>
+/// Represents the ability to do work asynchronously against a data source.
+/// </summary>
+public interface IDbHandlerAsync
 {
-  /// <summary>
-  /// Represents the ability to do work asynchronously against a data source.
-  /// </summary>
-  public interface IDbHandlerAsync
-  {
     /// <summary>
     /// Asynchronously execute parameterized query.
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    Task ExecAsync(string sql, DbParams param = null);
+    Task ExecAsync(string sql, DbParams? param = null);
 
     /// <summary>
     /// Asynchronously execute parameterized query multiple times
@@ -33,7 +32,7 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    Task<object> ScalarAsync(string sql, DbParams param = null);
+    Task<object?> ScalarAsync(string sql, DbParams? param = null);
 
     /// <summary>
     /// Asynchronously execute parameterized query, enumerate all records and apply mapping.
@@ -62,7 +61,7 @@ namespace Spiffy
     /// <param name="map"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    Task<T> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map);
+    Task<T?> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map);
 
     /// <summary>
     /// Asynchronously execute query, read only first record and apply mapping.
@@ -71,7 +70,7 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="map"></param>
     /// <returns></returns>
-    Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map);
+    Task<T?> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map);
 
     /// <summary>
     /// Execute paramterized query and manually cursor IDataReader.
@@ -89,5 +88,4 @@ namespace Spiffy
     /// <param name="read"></param>
     /// <returns></returns>
     Task<T> ReadAsync<T>(string sql, Func<IDataReader, T> read);
-  }
 }

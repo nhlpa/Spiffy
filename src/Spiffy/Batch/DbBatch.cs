@@ -1,30 +1,23 @@
-using Spiffy;
+namespace Spiffy;
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace Spiffy
+/// <summary>
+/// Database unit of work.
+/// </summary>
+/// <remarks>
+/// Constitute a new DbBatch from IDbConnection and IDbTransaction
+/// </remarks>
+/// <param name="connection"></param>
+/// <param name="transaction"></param>
+public class DbBatch(IDbConnection connection, IDbTransaction transaction) : IDbBatch
 {
-  /// <summary>
-  /// Database unit of work.
-  /// </summary>
-  public class DbBatch : IDbBatch
-  {
-    private readonly IDbConnection _connection;
-    private readonly IDbTransaction _transaction;
-
-    /// <summary>
-    /// Constitute a new DbBatch from IDbConnection and IDbTransaction
-    /// </summary>
-    /// <param name="connection"></param>
-    /// <param name="transaction"></param>
-    public DbBatch(IDbConnection connection, IDbTransaction transaction)
-    {
-      _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
-      _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-    }
+    private readonly IDbConnection _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+    private readonly IDbTransaction _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
 
     /// <summary>
     /// Commit unit of work and cleanup.
@@ -32,19 +25,19 @@ namespace Spiffy
     /// </summary>
     public void Commit()
     {
-      try
-      {
-        _transaction.Commit();
-      }
-      catch (Exception ex)
-      {
-        _transaction.Rollback();
-        throw new FailedCommitBatchException(ex);
-      }
-      finally
-      {
-        Dispose();
-      }
+        try
+        {
+            _transaction.Commit();
+        }
+        catch (Exception ex)
+        {
+            _transaction.Rollback();
+            throw new FailedCommitBatchException(ex);
+        }
+        finally
+        {
+            Dispose();
+        }
     }
 
     /// <summary>
@@ -52,18 +45,18 @@ namespace Spiffy
     /// </summary>
     public void Rollback()
     {
-      try
-      {
-        _transaction.Rollback();
-      }
-      catch (Exception)
-      {
-        throw;
-      }
-      finally
-      {
-        Dispose();
-      }
+        try
+        {
+            _transaction.Rollback();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        finally
+        {
+            Dispose();
+        }
     }
 
     /// <summary>
@@ -72,7 +65,7 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public void Exec(string sql, DbParams param = null) =>
+    public void Exec(string sql, DbParams? param = null) =>
         Do(sql, param, cmd => cmd.Exec());
 
     /// <summary>
@@ -90,7 +83,7 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public object Scalar(string sql, DbParams param = null) =>
+    public object? Scalar(string sql, DbParams? param = null) =>
         Do(sql, param, cmd => cmd.Scalar());
 
     /// <summary>
@@ -122,7 +115,7 @@ namespace Spiffy
     /// <param name="map"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public T QuerySingle<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
+    public T? QuerySingle<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
         Do(sql, param, cmd => cmd.QuerySingle(map));
 
     /// <summary>
@@ -132,7 +125,7 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="map"></param>
     /// <returns></returns>
-    public T QuerySingle<T>(string sql, Func<IDataReader, T> map) =>
+    public T? QuerySingle<T>(string sql, Func<IDataReader, T> map) =>
         QuerySingle(sql, new DbParams(), map);
 
     /// <summary>
@@ -160,7 +153,7 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public Task ExecAsync(string sql, DbParams param = null) =>
+    public Task ExecAsync(string sql, DbParams? param = null) =>
         DoAsync(sql, param, cmd => cmd.ExecAsync());
 
     /// <summary>
@@ -179,7 +172,7 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public Task<object> ScalarAsync(string sql, DbParams param = null) =>
+    public Task<object?> ScalarAsync(string sql, DbParams? param = null) =>
         DoAsync(sql, param, cmd => cmd.ScalarAsync());
 
     /// <summary>
@@ -201,7 +194,7 @@ namespace Spiffy
     /// <param name="map"></param>
     /// <returns></returns>
     public Task<IEnumerable<T>> QueryAsync<T>(string sql, Func<IDataReader, T> map) =>
-        DoAsync(sql, new DbParams(), cmd => cmd.QueryAsync(map));
+        DoAsync(sql, [], cmd => cmd.QueryAsync(map));
 
     /// <summary>
     /// Asynchronously execute paramterized query, read only first record and apply mapping.
@@ -211,7 +204,7 @@ namespace Spiffy
     /// <param name="map"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    public Task<T> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
+    public Task<T?> QuerySingleAsync<T>(string sql, DbParams param, Func<IDataReader, T> map) =>
         DoAsync(sql, param, cmd => cmd.QuerySingleAsync(map));
 
     /// <summary>
@@ -221,8 +214,8 @@ namespace Spiffy
     /// <param name="sql"></param>
     /// <param name="map"></param>
     /// <returns></returns>
-    public Task<T> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map) =>
-        DoAsync(sql, new DbParams(), cmd => cmd.QuerySingleAsync(map));
+    public Task<T?> QuerySingleAsync<T>(string sql, Func<IDataReader, T> map) =>
+        DoAsync(sql, [], cmd => cmd.QuerySingleAsync(map));
 
     /// <summary>
     /// Execute paramterized query and manually cursor IDataReader.
@@ -248,45 +241,43 @@ namespace Spiffy
     /// </summary>
     public void Dispose()
     {
-      _connection.Close();
-      _transaction.Dispose();
+        _connection.Close();
+        _transaction.Dispose();
     }
 
-    private void Do(string sql, DbParams param, Action<IDbCommand> action) =>
-      action(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
+    private void Do(string sql, DbParams? param, Action<IDbCommand> action) =>
+        action(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
 
-    private T Do<T>(string sql, DbParams param, Func<IDbCommand, T> func) =>
-      func(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
+    private T Do<T>(string sql, DbParams? param, Func<IDbCommand, T> func) =>
+        func(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
 
-    private async Task DoAsync(string sql, DbParams param, Func<DbCommand, Task> func) =>
-      await func(new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param).Build() as DbCommand);
+    private Task DoAsync(string sql, DbParams? param, Func<DbCommand, Task> func) =>
+        func(new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param ?? []).Build().ToDbCommand());
 
-    private async Task<T> DoAsync<T>(string sql, DbParams param, Func<DbCommand, Task<T>> func) =>
-      await func(new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param).Build() as DbCommand);
+    private Task<T> DoAsync<T>(string sql, DbParams? param, Func<DbCommand, Task<T>> func) =>
+        func(new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param ?? []).Build().ToDbCommand());
 
     private void DoMany(string sql, IEnumerable<DbParams> paramList, Action<IDbCommand> func)
     {
-      var cmd = new DbCommandBuilder(_transaction, sql).Build();
+        var cmd = new DbCommandBuilder(_transaction, sql).Build();
 
-      foreach (var param in paramList)
-      {
-        cmd.Parameters.Clear();
-        cmd.SetDbParams(param);
-        func(cmd);
-      }
-
+        foreach (var param in paramList)
+        {
+            cmd.Parameters.Clear();
+            cmd.SetDbParams(param);
+            func(cmd);
+        }
     }
 
-    private async Task DoManyAsync(string sql, IEnumerable<DbParams> paramList, Func<System.Data.Common.DbCommand, Task> func)
+    private async Task DoManyAsync(string sql, IEnumerable<DbParams> paramList, Func<DbCommand, Task> func)
     {
-      var cmd = new DbCommandBuilder(_transaction, sql).Build() as System.Data.Common.DbCommand;
+        var cmd = new DbCommandBuilder(_transaction, sql).Build().ToDbCommand();
 
-      foreach (var param in paramList)
-      {
-        cmd.Parameters.Clear();
-        cmd.SetDbParams(param);
-        await func(cmd);
-      }
+        foreach (var param in paramList)
+        {
+            cmd.Parameters.Clear();
+            cmd.SetDbParams(param);
+            await func(cmd);
+        }
     }
-  }
 }
