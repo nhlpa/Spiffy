@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 
 namespace Spiffy
 {
@@ -10,7 +12,65 @@ namespace Spiffy
     public static class IDataReaderExtensions
     {
         /// <summary>
-        /// Read string from IDataReader
+        /// Map IDataReader to IEnumerable of T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rd"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Map<T>(this IDataReader rd, Func<IDataReader, T> map)
+        {
+            var records = new List<T>();
+
+            while (rd.Read())
+            {
+                records.Add(map(rd));
+            }
+
+            return records;
+        }
+
+        /// <summary>
+        /// Map first iteration of IDataReader to T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rd"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static T MapFirst<T>(this IDataReader rd, Func<IDataReader, T> map)
+        {
+            if (rd.Read())
+            {
+                return map(rd);
+            }
+            else
+            {
+                return default;
+            }
+        }
+
+        /// <summary>
+        /// Map next iteration of IDataReader to IEnumerable of T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rd"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> MapNext<T>(this IDataReader rd, Func<IDataReader, T> map) =>
+            rd.NextResult() ? rd.Map(map) : Enumerable.Empty<T>();
+
+        /// <summary>
+        /// Map next iteration of IDataReader to T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rd"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static T MapFirstNext<T>(this IDataReader rd, Func<IDataReader, T> map) =>
+            rd.NextResult() ? rd.MapFirst(map) : default;
+
+        /// <summary>
+        /// /// Read string from IDataReader
         /// </summary>
         public static string ReadString(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetString);
 

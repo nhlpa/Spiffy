@@ -79,14 +79,7 @@ namespace Spiffy
           {
               using (var rd = cmd.TryExecuteReader(commandBehavior))
               {
-                  var records = new List<T>();
-
-                  while (rd.Read())
-                  {
-                      records.Add(map(rd));
-                  }
-
-                  return records;
+                  return rd.Map(map);
               }
           });
 
@@ -103,14 +96,7 @@ namespace Spiffy
           {
               using (var rd = cmd.TryExecuteReader(commandBehavior))
               {
-                  if (rd.Read())
-                  {
-                      return map(rd);
-                  }
-                  else
-                  {
-                      return default;
-                  }
+                  return rd.MapFirst(map);
               }
           });
 
