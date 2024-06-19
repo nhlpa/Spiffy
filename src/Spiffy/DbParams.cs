@@ -8,7 +8,7 @@ using System.Linq;
 /// <summary>
 /// A container for database bound parameters.
 /// </summary>
-public sealed class DbParams : Dictionary<string, object>
+public sealed class DbParams : Dictionary<string, object?>
 {
     /// <summary>
     /// Initialize a new instance of the DbParams class
@@ -20,7 +20,7 @@ public sealed class DbParams : Dictionary<string, object>
     /// <summary>
     /// Initialize a new instance of the DbParams class from a key and value
     /// </summary>
-    public DbParams(string key, object value)
+    public DbParams(string key, object? value)
     {
         if (!this.ContainsKey(key))
         {
@@ -61,7 +61,7 @@ public static class DbParamsExtensions
 /// </remarks>
 /// <param name="dbType"></param>
 /// <param name="value"></param>
-public sealed class DbTypeParam(DbType dbType, object value)
+public sealed class DbTypeParam(DbType dbType, object? value = null)
 {
     /// <summary>
     /// The DbType of the parameter
@@ -71,17 +71,17 @@ public sealed class DbTypeParam(DbType dbType, object value)
     /// <summary>
     /// The value of the parameter
     /// </summary>
-    public object Value { get; } = value;
+    public object Value { get; } = value ?? DBNull.Value;
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.AnsiString
     /// </summary>
-    public static DbTypeParam AnsiString(string v) => new DbTypeParam(DbType.AnsiString, v);
+    public static DbTypeParam AnsiString(string v) => new(DbType.AnsiString, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Binary
     /// </summary>
-    public static DbTypeParam Binary(byte[] v) => new DbTypeParam(DbType.Binary, v);
+    public static DbTypeParam Binary(byte[] v) => new(DbType.Binary, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Binary
@@ -91,97 +91,97 @@ public sealed class DbTypeParam(DbType dbType, object value)
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Byte
     /// </summary>
-    public static DbTypeParam Byte(byte v) => new DbTypeParam(DbType.Byte, v);
+    public static DbTypeParam Byte(byte v) => new(DbType.Byte, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Boolean
     /// </summary>
-    public static DbTypeParam Boolean(bool v) => new DbTypeParam(DbType.Boolean, v);
+    public static DbTypeParam Boolean(bool v) => new(DbType.Boolean, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Currency
     /// </summary>
-    public static DbTypeParam Currency(decimal v) => new DbTypeParam(DbType.Currency, v);
+    public static DbTypeParam Currency(decimal v) => new(DbType.Currency, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Date
     /// </summary>
-    public static DbTypeParam Date(DateTime v) => new DbTypeParam(DbType.Date, v);
+    public static DbTypeParam Date(DateTime v) => new(DbType.Date, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.DateTime
     /// </summary>
-    public static DbTypeParam DateTime(DateTime v) => new DbTypeParam(DbType.DateTime, v);
+    public static DbTypeParam DateTime(DateTime v) => new(DbType.DateTime, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Decimal
     /// </summary>
-    public static DbTypeParam Decimal(decimal v) => new DbTypeParam(DbType.Decimal, v);
+    public static DbTypeParam Decimal(decimal v) => new(DbType.Decimal, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Double
     /// </summary>
-    public static DbTypeParam Double(double v) => new DbTypeParam(DbType.Double, v);
+    public static DbTypeParam Double(double v) => new(DbType.Double, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Guid
     /// </summary>
-    public static DbTypeParam Guid(Guid v) => new DbTypeParam(DbType.Guid, v);
+    public static DbTypeParam Guid(Guid v) => new(DbType.Guid, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Int16
     /// </summary>
-    public static DbTypeParam Int16(short v) => new DbTypeParam(DbType.Int16, v);
+    public static DbTypeParam Int16(short v) => new(DbType.Int16, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Int32
     /// </summary>
-    public static DbTypeParam Int32(int v) => new DbTypeParam(DbType.Int32, v);
+    public static DbTypeParam Int32(int v) => new(DbType.Int32, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Int64
     /// </summary>
-    public static DbTypeParam Int64(long v) => new DbTypeParam(DbType.Int64, v);
+    public static DbTypeParam Int64(long v) => new(DbType.Int64, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Object
     /// </summary>
-    public static DbTypeParam Object(object v) => new DbTypeParam(DbType.Object, v);
+    public static DbTypeParam Object(object v) => new(DbType.Object, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Single
     /// </summary>
-    public static DbTypeParam Float(float v) => new DbTypeParam(DbType.Single, v);
+    public static DbTypeParam Float(float v) => new(DbType.Single, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.String
     /// </summary>
-    public static DbTypeParam String(string v) => new DbTypeParam(DbType.String, v);
+    public static DbTypeParam String(string v) => new(DbType.String, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.UInt16
     /// </summary>
-    public static DbTypeParam UInt16(ushort v) => new DbTypeParam(DbType.UInt16, v);
+    public static DbTypeParam UInt16(ushort v) => new(DbType.UInt16, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.UInt32
     /// </summary>
-    public static DbTypeParam UInt32(uint v) => new DbTypeParam(DbType.UInt32, v);
+    public static DbTypeParam UInt32(uint v) => new(DbType.UInt32, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.UInt64
     /// </summary>
-    public static DbTypeParam UInt64(ulong v) => new DbTypeParam(DbType.UInt64, v);
+    public static DbTypeParam UInt64(ulong v) => new(DbType.UInt64, v);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.AnsiString
     /// </summary>
-    public static DbTypeParam NullAnsiString => new DbTypeParam(DbType.AnsiString, DBNull.Value);
+    public static DbTypeParam NullAnsiString => new(DbType.AnsiString);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Binary
     /// </summary>
-    public static DbTypeParam NullBinary => new DbTypeParam(DbType.Binary, DBNull.Value);
+    public static DbTypeParam NullBinary => new(DbType.Binary);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Binary
@@ -191,90 +191,90 @@ public sealed class DbTypeParam(DbType dbType, object value)
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Byte
     /// </summary>
-    public static DbTypeParam NullByte => new DbTypeParam(DbType.Byte, DBNull.Value);
+    public static DbTypeParam NullByte => new(DbType.Byte);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Boolean
     /// </summary>
-    public static DbTypeParam NullBoolean => new DbTypeParam(DbType.Boolean, DBNull.Value);
+    public static DbTypeParam NullBoolean => new(DbType.Boolean);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Currency
     /// </summary>
-    public static DbTypeParam NullCurrency => new DbTypeParam(DbType.Currency, DBNull.Value);
+    public static DbTypeParam NullCurrency => new(DbType.Currency);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Date
     /// </summary>
-    public static DbTypeParam NullDate => new DbTypeParam(DbType.Date, DBNull.Value);
+    public static DbTypeParam NullDate => new(DbType.Date);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.DateTime
     /// </summary>
-    public static DbTypeParam NullDateTime => new DbTypeParam(DbType.DateTime, DBNull.Value);
+    public static DbTypeParam NullDateTime => new(DbType.DateTime);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Decimal
     /// </summary>
-    public static DbTypeParam NullDecimal => new DbTypeParam(DbType.Decimal, DBNull.Value);
+    public static DbTypeParam NullDecimal => new(DbType.Decimal);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Double
     /// </summary>
-    public static DbTypeParam NullDouble => new DbTypeParam(DbType.Double, DBNull.Value);
+    public static DbTypeParam NullDouble => new(DbType.Double);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Guid
     /// </summary>
-    public static DbTypeParam NullGuid => new DbTypeParam(DbType.Guid, DBNull.Value);
+    public static DbTypeParam NullGuid => new(DbType.Guid);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Int16
     /// </summary>
-    public static DbTypeParam NullInt16 => new DbTypeParam(DbType.Int16, DBNull.Value);
+    public static DbTypeParam NullInt16 => new(DbType.Int16);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Int32
     /// </summary>
-    public static DbTypeParam NullInt32 => new DbTypeParam(DbType.Int32, DBNull.Value);
+    public static DbTypeParam NullInt32 => new(DbType.Int32);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Int64
     /// </summary>
-    public static DbTypeParam NullInt64 => new DbTypeParam(DbType.Int64, DBNull.Value);
+    public static DbTypeParam NullInt64 => new(DbType.Int64);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Object
     /// </summary>
-    public static DbTypeParam NullObject => new DbTypeParam(DbType.Object, DBNull.Value);
+    public static DbTypeParam NullObject => new(DbType.Object);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Single
     /// </summary>
-    public static DbTypeParam NullFloat => new DbTypeParam(DbType.Single, DBNull.Value);
+    public static DbTypeParam NullFloat => new(DbType.Single);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.String
     /// </summary>
-    public static DbTypeParam NullString => new DbTypeParam(DbType.String, DBNull.Value);
+    public static DbTypeParam NullString => new(DbType.String);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.Time
     /// </summary>
-    public static DbTypeParam NullTime => new DbTypeParam(DbType.Time, DBNull.Value);
+    public static DbTypeParam NullTime => new(DbType.Time);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.UInt16
     /// </summary>
-    public static DbTypeParam NullUInt16 => new DbTypeParam(DbType.UInt16, DBNull.Value);
+    public static DbTypeParam NullUInt16 => new(DbType.UInt16);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.UInt32
     /// </summary>
-    public static DbTypeParam NullUInt32 => new DbTypeParam(DbType.UInt32, DBNull.Value);
+    public static DbTypeParam NullUInt32 => new(DbType.UInt32);
 
     /// <summary>
     /// Initialize a new instance of the DbTypeParam with a null value DbType.UInt64
     /// </summary>
-    public static DbTypeParam NullUInt64 => new DbTypeParam(DbType.UInt64, DBNull.Value);
+    public static DbTypeParam NullUInt64 => new(DbType.UInt64);
 }

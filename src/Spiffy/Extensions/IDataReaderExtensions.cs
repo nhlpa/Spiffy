@@ -68,7 +68,7 @@ public static class IDataReaderExtensions
     /// <summary>
     /// /// Read string from IDataReader
     /// </summary>
-    public static string? ReadString(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetString);
+    public static string ReadString(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetString) ?? string.Empty;
 
     /// <summary>
     /// Read char from IDataReader
@@ -154,6 +154,16 @@ public static class IDataReaderExtensions
     public static byte[] ReadBytes(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.StreamBytes) ?? [];
 
     /// <summary>
+    /// /// Read string from IDataReader
+    /// </summary>
+    public static string? ReadNullableString(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetString);
+
+    /// <summary>
+    /// Read char from IDataReader
+    /// </summary>
+    public static char? ReadNullableChar(this IDataReader rd, string field) => rd.ReadValueByField(field, rd.GetChar);
+
+    /// <summary>
     /// Read bool? from IDataReader
     /// </summary>
     public static bool? ReadNullableBoolean(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetBoolean);
@@ -223,7 +233,7 @@ public static class IDataReaderExtensions
     /// </summary>
     public static DateTime? ReadNullableDateTime(this IDataReader rd, string field) => rd.ReadNullableValueByField(field, rd.GetDateTime);
 
-    private static T? ReadValueByField<T>(this IDataReader rd, string fieldName, Func<int, T> map)
+    private static T? ReadValueByField<T>(this IDataReader rd, string fieldName, Func<int, T?> map)
     {
         var i = rd.GetOrdinal(fieldName);
 
