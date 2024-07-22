@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 /// the database directly.
 /// </summary>
 /// <typeparam name="TConn">The IDbConnectionFactory to use for connection creation.</typeparam>
-public class DbFixture<TConn> : IDbBatchFactory, IDbConnectionFactory, IDbHandler, IDbHandlerAsync where TConn : IDbConnectionFactory
+public class DbFixture<TConn> : IDbFixture where TConn : IDbConnectionFactory
 {
     private readonly TConn _connectionFactory;
 
@@ -40,62 +40,10 @@ public class DbFixture<TConn> : IDbBatchFactory, IDbConnectionFactory, IDbHandle
     /// <returns></returns>
     public IDbBatch NewBatch()
     {
-        var conn = _connectionFactory.NewConnection();
-        conn.TryOpenConnection();
-        var tran = conn.TryBeginTransaction();
-        return new DbBatch(conn, tran);
-    }
-
-    /// <summary>
-    /// Do work in an auto-batch that returns results
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="fn"></param>
-    /// <returns></returns>
-    public T Batch<T>(Func<IDbBatch, T> fn)
-    {
-        var batch = NewBatch();
-        var result = fn(batch);
-        batch.Commit();
-        return result;
-    }
-
-    /// <summary>
-    /// Do work in an auto-batch that returns no results
-    /// </summary>
-    /// <param name="fn"></param>
-    /// <returns></returns>
-    public void Batch(Action<IDbBatch> fn)
-    {
-        var batch = NewBatch();
-        fn(batch);
-        batch.Commit();
-    }
-
-    /// <summary>
-    /// Do asynchronous work in an auto-batch that returns results
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="fn"></param>
-    /// <returns></returns>
-    public async Task<T> BatchAsync<T>(Func<IDbBatch, Task<T>> fn)
-    {
-        var batch = NewBatch();
-        var result = await fn(batch);
-        batch.Commit();
-        return result;
-    }
-
-    /// <summary>
-    /// Do asynchronous work in an auto-batch that returns no results
-    /// </summary>
-    /// <param name="fn"></param>
-    /// <returns></returns>
-    public async Task BatchAsync(Func<IDbBatch, Task> fn)
-    {
-        var batch = NewBatch();
-        await fn(batch);
-        batch.Commit();
+        var connection = _connectionFactory.NewConnection();
+        connection.TryOpenConnection();
+        var tran = connection.TryBeginTransaction();
+        return new DbBatch(connection, tran);
     }
 
     /// <summary>
@@ -273,4 +221,35 @@ public class DbFixture<TConn> : IDbBatchFactory, IDbConnectionFactory, IDbHandle
     /// <returns></returns>
     public Task<T> ReadAsync<T>(string sql, Func<IDataReader, T> read) =>
       BatchAsync(b => b.ReadAsync(sql, read));
+
+
+    private T Batch<T>(Func<IDbBatch, T> fn)
+    {
+        var batch = NewBatch();
+        var result = fn(batch);
+        batch.Commit();
+        return result;
+    }
+
+    private void Batch(Action<IDbBatch> fn)
+    {
+        var batch = NewBatch();
+        fn(batch);
+        batch.Commit();
+    }
+
+    private async Task<T> BatchAsync<T>(Func<IDbBatch, Task<T>> fn)
+    {
+        var batch = NewBatch();
+        var result = await fn(batch);
+        batch.Commit();
+        return result;
+    }
+
+    private async Task BatchAsync(Func<IDbBatch, Task> fn)
+    {
+        var batch = NewBatch();
+        await fn(batch);
+        batch.Commit();
+    }
 }

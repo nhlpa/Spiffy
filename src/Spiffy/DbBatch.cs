@@ -31,7 +31,7 @@ public class DbBatch(IDbConnection connection, IDbTransaction transaction) : IDb
         }
         catch (Exception ex)
         {
-            _transaction.Rollback();
+            Rollback();
             throw new FailedCommitBatchException(ex);
         }
         finally
@@ -49,14 +49,20 @@ public class DbBatch(IDbConnection connection, IDbTransaction transaction) : IDb
         {
             _transaction.Rollback();
         }
-        catch (Exception)
-        {
-            throw;
-        }
         finally
         {
             Dispose();
         }
+    }
+
+    /// <summary>
+    /// Create a new IDbBatch, which represents a database unit of work.
+    /// </summary>
+    /// <returns></returns>
+    public IDbBatch NewBatch()
+    {
+        var transaction = _connection.TryBeginTransaction();
+        return new DbBatch(_connection, transaction);
     }
 
     /// <summary>
@@ -246,10 +252,10 @@ public class DbBatch(IDbConnection connection, IDbTransaction transaction) : IDb
     }
 
     private void Do(string sql, DbParams? param, Action<IDbCommand> action) =>
-        action(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
+        action(new DbCommandBuilder(_transaction, sql, param ?? []).Build());
 
     private T Do<T>(string sql, DbParams? param, Func<IDbCommand, T> func) =>
-        func(new DbCommandBuilder(_transaction, sql, param ?? new DbParams()).Build());
+        func(new DbCommandBuilder(_transaction, sql, param ?? []).Build());
 
     private Task DoAsync(string sql, DbParams? param, Func<DbCommand, Task> func) =>
         func(new DbCommandBuilder(_transaction).CommandText(sql).DbParams(param ?? []).Build().ToDbCommand());
