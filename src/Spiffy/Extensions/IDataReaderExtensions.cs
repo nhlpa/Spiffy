@@ -248,7 +248,7 @@ public static class IDataReaderExtensions
         }
         catch (InvalidCastException ex)
         {
-            throw new FailedExecutionException(DbErrorCode.CouldNotCastValue, fieldName, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotCastValue, fieldName, ex);
         }
     }
 
@@ -267,7 +267,7 @@ public static class IDataReaderExtensions
         }
         catch (InvalidCastException ex)
         {
-            throw new FailedExecutionException(DbErrorCode.CouldNotCastValue, fieldName, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotCastValue, fieldName, ex);
         }
     }
 

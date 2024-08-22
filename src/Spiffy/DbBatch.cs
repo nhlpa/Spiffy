@@ -31,7 +31,6 @@ public class DbBatch(IDbConnection connection, IDbTransaction transaction) : IDb
         }
         catch (Exception ex)
         {
-            Rollback();
             throw new FailedCommitBatchException(ex);
         }
         finally

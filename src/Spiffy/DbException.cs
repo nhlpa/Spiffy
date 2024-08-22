@@ -5,7 +5,7 @@ using System;
 /// <summary>
 /// Errors thrown during database interaction.
 /// </summary>
-public enum DbErrorCode
+public enum DatabaseErrorCode
 {
     /// <summary>
     /// Could Not Open Connection
@@ -62,12 +62,12 @@ public enum DbErrorCode
 /// <param name="errorCode"></param>
 /// <param name="message"></param>
 /// <param name="innerEx"></param>
-public class DbException(DbErrorCode errorCode, string message, Exception? innerEx = null) : Exception(message, innerEx)
+public class DatabaseException(DatabaseErrorCode errorCode, string message, Exception? innerEx = null) : Exception(message, innerEx)
 {
     /// <summary>
     /// The error DbErrorCode
     /// </summary>
-    public readonly DbErrorCode ErrorCode = errorCode;
+    public readonly DatabaseErrorCode ErrorCode = errorCode;
 }
 
 /// <summary>
@@ -77,20 +77,21 @@ public class DbException(DbErrorCode errorCode, string message, Exception? inner
 /// Initializes a new instance of the CouldNotOpenConnectionException class
 /// </remarks>
 /// <param name="ex"></param>
-public class CouldNotOpenConnectionException(Exception ex) : DbException(DbErrorCode.CouldNotOpenConnection, $"Could not establish database connection.", ex)
+public class CouldNotOpenConnectionException(Exception ex)
+    : DatabaseException(DatabaseErrorCode.CouldNotOpenConnection, $"Could not establish database connection.", ex)
 {
 }
 
 /// <summary>
 /// Represents a failure due to a busy database connection
 /// </summary>
-public class ConnectionBusyException : DbException
+public class ConnectionBusyException : DatabaseException
 {
     /// <summary>
     /// Initializes a new instance of the ConnectionBusyException class
     /// </summary>
     public ConnectionBusyException()
-      : base(DbErrorCode.ConnectionBusy, $"The connection is not currently available to open.")
+      : base(DatabaseErrorCode.ConnectionBusy, $"The connection is not currently available to open.")
     {
     }
 }
@@ -102,7 +103,8 @@ public class ConnectionBusyException : DbException
 /// Initializes a new instance of the FailedTransacitonException class
 /// </remarks>
 /// <param name="ex"></param>
-public class FailedTransacitonException(Exception ex) : DbException(DbErrorCode.CouldNotBeginTransaction, $"Could not begin transaction.", ex)
+public class FailedTransacitonException(Exception ex)
+    : DatabaseException(DatabaseErrorCode.CouldNotBeginTransaction, $"Could not begin transaction.", ex)
 {
 }
 
@@ -113,7 +115,8 @@ public class FailedTransacitonException(Exception ex) : DbException(DbErrorCode.
 /// Initializes a new instance of the FailedBeginBatchException class
 /// </remarks>
 /// <param name="ex"></param>
-public class FailedBeginBatchException(Exception ex) : DbException(DbErrorCode.CouldNotBeginBatch, $"Could not begin batch.", ex)
+public class FailedBeginBatchException(Exception ex)
+    : DatabaseException(DatabaseErrorCode.CouldNotBeginBatch, $"Could not begin batch.", ex)
 {
 }
 
@@ -124,7 +127,8 @@ public class FailedBeginBatchException(Exception ex) : DbException(DbErrorCode.C
 /// Initializes a new instance of the FailedCommitBatchException class
 /// </remarks>
 /// <param name="ex"></param>
-public class FailedCommitBatchException(Exception ex) : DbException(DbErrorCode.CouldNotCommitBatch, $"Could not commit batch.", ex)
+public class FailedCommitBatchException(Exception ex)
+    : DatabaseException(DatabaseErrorCode.CouldNotCommitBatch, $"Could not commit batch.", ex)
 {
 }
 
@@ -137,6 +141,7 @@ public class FailedCommitBatchException(Exception ex) : DbException(DbErrorCode.
 /// <param name="errorCode"></param>
 /// <param name="sql"></param>
 /// /// <param name="ex"></param>
-public class FailedExecutionException(DbErrorCode errorCode, string sql, Exception ex) : DbException(errorCode, sql, ex)
+public class FailedExecutionException(DatabaseErrorCode errorCode, string sql, Exception ex)
+    : DatabaseException(errorCode, sql, ex)
 {
 }

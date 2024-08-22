@@ -17,7 +17,7 @@ public static class DbCommandExtensions
     /// </summary>
     /// <param name="dbCommand"></param>
     /// <returns></returns>
-    public async static Task ExecAsync(this DbCommand dbCommand) =>
+    public static async Task ExecAsync(this DbCommand dbCommand) =>
       await dbCommand.DoVoidAsync(async cmd => await cmd.ExecuteNonQueryAsync());
 
     /// <summary>
@@ -26,7 +26,7 @@ public static class DbCommandExtensions
     /// <param name="dbCommand"></param>
     /// <param name="paramList"></param>
     /// <returns></returns>
-    public async static Task ExecManyAsync(this DbCommand dbCommand, IEnumerable<DbParams> paramList) =>
+    public static async Task ExecManyAsync(this DbCommand dbCommand, IEnumerable<DbParams> paramList) =>
       await dbCommand.DoManyAsync(paramList, async cmd => await cmd.ExecuteNonQueryAsync());
 
     /// <summary>
@@ -45,7 +45,7 @@ public static class DbCommandExtensions
     /// <param name="map"></param>
     /// <param name="commandBehavior"></param>
     /// <returns></returns>
-    public async static Task<IEnumerable<T>> QueryAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
+    public static async Task<IEnumerable<T>> QueryAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
       await dbCommand.DoAsync(async cmd =>
       {
           using var rd = await dbCommand.ExecuteReaderAsync(commandBehavior);
@@ -60,7 +60,7 @@ public static class DbCommandExtensions
     /// <param name="map"></param>
     /// <param name="commandBehavior"></param>
     /// <returns></returns>
-    public async static Task<T?> QuerySingleAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
+    public static async Task<T?> QuerySingleAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> map, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
       await dbCommand.DoAsync(async cmd =>
       {
           using var rd = await dbCommand.TryExecuteReaderAsync(commandBehavior);
@@ -73,7 +73,7 @@ public static class DbCommandExtensions
     /// <param name="read"></param>
     /// <param name="commandBehavior"></param>
     /// </summary>
-    public async static Task<T> ReadAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> read, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
+    public static async Task<T> ReadAsync<T>(this DbCommand dbCommand, Func<IDataReader, T> read, CommandBehavior commandBehavior = CommandBehavior.SequentialAccess) =>
       await dbCommand.DoAsync(async cmd =>
       {
           using var rd = await dbCommand.TryExecuteReaderAsync(commandBehavior);
@@ -87,15 +87,16 @@ public static class DbCommandExtensions
             cmd.Connection?.TryOpenConnection();
             return await func(cmd);
         }
-        catch (Exception ex)
+        catch (DbException ex)
         {
             cmd.TryRollback();
-            throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
         }
     }
 
     private static async Task DoVoidAsync(this DbCommand cmd, Func<DbCommand, Task> func)
     {
+        Console.WriteLine("\n\n\n\n!!!!!THERE!!!!!\n\n\n");
         try
         {
             cmd.Connection?.TryOpenConnection();
@@ -103,8 +104,9 @@ public static class DbCommandExtensions
         }
         catch (DbException ex)
         {
+            Console.WriteLine("\n\n\n\n!!!!!HERE!!!!!\n\n\n");
             cmd.TryRollback();
-            throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
         }
     }
 
@@ -134,9 +136,9 @@ public static class DbCommandExtensions
             cmd.Connection?.TryOpenConnection();
             return await cmd.ExecuteReaderAsync(commandBehavior);
         }
-        catch (Exception ex)
+        catch (DbException ex)
         {
-            throw new FailedExecutionException(DbErrorCode.CouldNotExecuteReader, cmd.CommandText, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotExecuteReader, cmd.CommandText, ex);
         }
     }
 }

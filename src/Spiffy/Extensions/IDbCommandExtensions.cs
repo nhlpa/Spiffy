@@ -196,7 +196,7 @@ public static class IDbCommandExtensions
         catch (Exception ex)
         {
             cmd.TryRollback();
-            throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
         }
     }
 
@@ -210,7 +210,7 @@ public static class IDbCommandExtensions
         catch (Exception ex)
         {
             cmd.TryRollback();
-            throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
         }
     }
 
@@ -230,7 +230,7 @@ public static class IDbCommandExtensions
         catch (Exception ex)
         {
             cmd.TryRollback();
-            throw new FailedExecutionException(DbErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotExecuteNonQuery, cmd.CommandText, ex);
         }
     }
 
@@ -243,7 +243,7 @@ public static class IDbCommandExtensions
         }
         catch (Exception ex)
         {
-            throw new FailedExecutionException(DbErrorCode.CouldNotExecuteReader, cmd.CommandText, ex);
+            throw new FailedExecutionException(DatabaseErrorCode.CouldNotExecuteReader, cmd.CommandText, ex);
         }
     }
 }

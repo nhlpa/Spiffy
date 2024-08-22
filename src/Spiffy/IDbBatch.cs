@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// Database unit of work.
 /// </summary>
-public interface IDbBatch : IDisposable, IDbHandler
+public interface IDbBatch : IDbHandler, IDisposable
 {
     /// <summary>
     /// Commit unit of work.

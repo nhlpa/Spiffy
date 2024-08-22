@@ -47,6 +47,58 @@ public class DbFixture<TConn> : IDbFixture where TConn : IDbConnectionFactory
     }
 
     /// <summary>
+    /// Do work in an auto-batch that returns results
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="fn"></param>
+    /// <returns></returns>
+    public T Batch<T>(Func<IDbBatch, T> fn)
+    {
+        var batch = NewBatch();
+        var result = fn(batch);
+        batch.Commit();
+        return result;
+    }
+
+    /// <summary>
+    /// Do work in an auto-batch that returns no results
+    /// </summary>
+    /// <param name="fn"></param>
+    /// <returns></returns>
+    public void Batch(Action<IDbBatch> fn)
+    {
+        var batch = NewBatch();
+        fn(batch);
+        batch.Commit();
+    }
+
+    /// <summary>
+    /// Do asynchronous work in an auto-batch that returns results
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="fn"></param>
+    /// <returns></returns>
+    public async Task<T> BatchAsync<T>(Func<IDbBatch, Task<T>> fn)
+    {
+        var batch = NewBatch();
+        var result = await fn(batch);
+        batch.Commit();
+        return result;
+    }
+
+    /// <summary>
+    /// Do asynchronous work in an auto-batch that returns no results
+    /// </summary>
+    /// <param name="fn"></param>
+    /// <returns></returns>
+    public async Task BatchAsync(Func<IDbBatch, Task> fn)
+    {
+        var batch = NewBatch();
+        await fn(batch);
+        batch.Commit();
+    }
+
+    /// <summary>
     /// Execute parameterized query.
     /// </summary>
     /// <param name="sql"></param>
@@ -221,35 +273,4 @@ public class DbFixture<TConn> : IDbFixture where TConn : IDbConnectionFactory
     /// <returns></returns>
     public Task<T> ReadAsync<T>(string sql, Func<IDataReader, T> read) =>
       BatchAsync(b => b.ReadAsync(sql, read));
-
-
-    private T Batch<T>(Func<IDbBatch, T> fn)
-    {
-        var batch = NewBatch();
-        var result = fn(batch);
-        batch.Commit();
-        return result;
-    }
-
-    private void Batch(Action<IDbBatch> fn)
-    {
-        var batch = NewBatch();
-        fn(batch);
-        batch.Commit();
-    }
-
-    private async Task<T> BatchAsync<T>(Func<IDbBatch, Task<T>> fn)
-    {
-        var batch = NewBatch();
-        var result = await fn(batch);
-        batch.Commit();
-        return result;
-    }
-
-    private async Task BatchAsync(Func<IDbBatch, Task> fn)
-    {
-        var batch = NewBatch();
-        await fn(batch);
-        batch.Commit();
-    }
 }
